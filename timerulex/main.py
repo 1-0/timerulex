@@ -40,7 +40,7 @@ else:
 def _(strin):
     return strin
 
-__version__ = '''0.2.2'''
+__version__ = '''0.2.4'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -125,6 +125,9 @@ class TimeX(QMainWindow):
         self.buttonPrint = QPushButton("Print")
         self.buttonPrint.setToolTip('Print all')
         self.buttonPrint.clicked.connect(self.printRules)
+        self.buttonSave = QPushButton("Save")
+        self.buttonSave.setToolTip('Save all')
+        self.buttonPrint.clicked.connect(self.saveRules)
         self.buttonExit = QPushButton(getIcon('system-log-out'), "Exit")
         self.buttonExit.setToolTip('Exit timerulex')
         self.buttonExit.clicked.connect(self.exitClicked)
@@ -141,6 +144,7 @@ class TimeX(QMainWindow):
         
 # add rules strings        
         self.commonLayout.addWidget(self.buttonPrint)
+        self.commonLayout.addWidget(self.buttonSave)
         self.commonLayout.addWidget(self.buttonExit)
         self.setCentralWidget(window)
         self.show()
@@ -192,8 +196,24 @@ class TimeX(QMainWindow):
         '''PrintRules(self) - Print Rules'''
         print('<xml>')
         for rrr in self.ruleStrings:
-            rrr.PrintRule(self.ruleStrings)
+            print (rrr.PrintRule(self.ruleStrings))
         print('</xml>')
+
+    def saveRules(self):
+        '''PrintRules(self) - Print Rules'''
+        xxx = '<xml>'
+        for rrr in self.ruleStrings:
+            xxx += rrr.getRule(self.ruleStrings)
+        xxx += '</xml>'
+        try:
+            self.conf = open(self.pathInput.text(), 'w')
+        except IOError:
+            print ("""open(self.pathInput.text(), 'w') - """+self.pathInput.text())
+            #os.makedirs(self.homePath+os.sep+'.config')
+            #self.conf = open(self.confPath, 'w+')
+        finally:
+            self.conf.write(xxx)
+            self.conf.close()
 
 class RuleString(QWidget):
     '''RuleString(QHBoxLayout) - rule string class'''
@@ -263,6 +283,21 @@ ruleSetType="'''+self.ruleSetType.currentText()+'''"
 rulePrice="'''+self.rulePrice.text()+'''"
         ></rule>
         ''')
+        
+
+    def getRule(self, RulesList):
+        '''PrintRule(self) - Print Rule'''
+        return '''<rule
+ruleOrderId="'''+str(RulesList.index(self))+'''"
+ruleStartTime="'''+self.ruleStartTime.time().toString(QtCore.Qt.ISODate)+'''"
+ruleStartDate="'''+self.ruleStartDate.selectedDate().toString(QtCore.Qt.ISODate)+'''"
+ruleEndTime="'''+self.ruleEndTime.time().toString(QtCore.Qt.ISODate)+'''"
+ruleEndDate="'''+self.ruleEndDate.selectedDate().toString(QtCore.Qt.ISODate)+'''"
+ruleTimeType="'''+self.ruleTimeType.currentText()+'''"
+ruleSetType="'''+self.ruleSetType.currentText()+'''"
+rulePrice="'''+self.rulePrice.text()+'''"
+        ></rule>
+        '''
         
 
 
