@@ -40,7 +40,7 @@ else:
 def _(strin):
     return strin
 
-__version__ = '''0.2.8'''
+__version__ = '''0.2.9'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -110,7 +110,7 @@ class TimeX(QMainWindow):
         self.buttonPath = QPushButton(getIcon('document-open'), "Select Rule")
         self.buttonPath.setToolTip('Select rule file')
         self.buttonPath.clicked.connect(self.openRule)
-        self.butAddRule = QPushButton(getIcon('network-workgroup'), "Add Rule")
+        self.butAddRule = QPushButton(getIcon('folder-remote'), "Add Rule")
         self.butAddRule.setToolTip('Add rule')
         self.butAddRule.clicked.connect(self.addRule)
         pathLayout.addWidget(self.pathLabel)
@@ -119,10 +119,10 @@ class TimeX(QMainWindow):
         pathLayout.addWidget(self.butAddRule)
         self.commonLayout.addLayout(pathLayout)
 
-        self.buttonPrint = QPushButton("Print")
+        self.buttonPrint = QPushButton(getIcon('network-workgroup'), "Print")
         self.buttonPrint.setToolTip('Print all')
         self.buttonPrint.clicked.connect(self.printRules)
-        self.buttonSave = QPushButton("Save")
+        self.buttonSave = QPushButton(getIcon('document-save'), "Save")
         self.buttonSave.setToolTip('Save all')
         self.buttonPrint.clicked.connect(self.saveRules)
         self.buttonExit = QPushButton(getIcon('system-log-out'), "Exit")
