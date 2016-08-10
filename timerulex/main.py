@@ -13,34 +13,36 @@ import ast
 from multiprocessing import Process
 
 
-try:
-#raise ImportError
-    imp.find_module('PySide')
-    foundPySide = True
-except ImportError:
-    print (u"""Try to use PyQt4
-(license - http://www.riverbankcomputing.co.uk/software/pyqt/license )
-instead of PySide
-(license - LGPL - http://www.gnu.org/copyleft/lesser.html )""")
-    foundPySide = False
+#try:
+##raise ImportError
+    #imp.find_module('PySide')
+    #foundPySide = True
+#except ImportError:
+    #print (u"""Try to use PyQt4
+#(license - http://www.riverbankcomputing.co.uk/software/pyqt/license )
+#instead of PySide
+#(license - LGPL - http://www.gnu.org/copyleft/lesser.html )""")
+    #foundPySide = False
+
+foundPySide = True
 
 if foundPySide:
-    from PySide import QtCore
+    from PySide import QtCore, QtXml
     from PySide.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QPushButton,\
         QLineEdit, QTextBrowser, QFileDialog, QDialog, QLabel, QCheckBox,\
-        QPixmap, QIcon, QMainWindow, QApplication, QGroupBox, QDialogButtonBox, QKeySequence, QDateTimeEdit, QTimeEdit, QComboBox, QScrollArea, QListWidget, QCalendarWidget
+        QPixmap, QIcon, QMainWindow, QApplication, QGroupBox, QDialogButtonBox, QKeySequence, QDateTimeEdit, QTimeEdit, QComboBox, QScrollArea, QListWidget, QCalendarWidget, QFrame
     LIB_USE = "PySide"
-else:
-    from PyQt4 import QtCore
-    from PyQt4.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QPushButton,\
-        QLineEdit, QTextBrowser, QFileDialog, QDialog, QLabel, QCheckBox,\
-        QPixmap, QIcon, QMainWindow, QApplication, QGroupBox, QDialogButtonBox, QKeySequence, QDateTimeEdit, QTimeEdit, QComboBox, QScrollArea, QListWidget, QCalendarWidget
-    LIB_USE = "PyQt"
+#else:
+    #from PyQt4 import QtCore
+    #from PyQt4.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QPushButton,\
+        #QLineEdit, QTextBrowser, QFileDialog, QDialog, QLabel, QCheckBox,\
+        #QPixmap, QIcon, QMainWindow, QApplication, QGroupBox, QDialogButtonBox, QKeySequence, QDateTimeEdit, QTimeEdit, QComboBox, QScrollArea, QListWidget, QCalendarWidget, QFrame
+    #LIB_USE = "PyQt"
 
 def _(strin):
     return strin
 
-__version__ = '''0.2.9'''
+__version__ = '''0.2.10'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -79,6 +81,18 @@ def getFileName(pathName, separatorSymbol=None):
         #return pathName.split('\\')[-1]
     else:
         return pathName.split(os.path.sep)[-1]
+
+
+
+class myXmlContentHandler(QtXml.QXmlDefaultHandler):    
+
+    def startElement(self,nameSpaceURI,localName,qName,atts):
+        print "Read Start Tag : "+ localName+ "\n"
+        print "Tag Attributes: "        
+        for num in range(0, atts.length()):    
+            print  atts.type(num)+ "=" +atts.value(num)+"\n"    
+        print "#####################################\n\n"  
+        return True
 
 
 class TimeX(QMainWindow):
@@ -124,7 +138,10 @@ class TimeX(QMainWindow):
         self.buttonPrint.clicked.connect(self.printRules)
         self.buttonSave = QPushButton(getIcon('document-save'), "Save")
         self.buttonSave.setToolTip('Save all')
-        self.buttonPrint.clicked.connect(self.saveRules)
+        self.buttonSave.clicked.connect(self.saveRules)
+        self.buttonOpen = QPushButton("Open")
+        self.buttonOpen.setToolTip('Open xml')
+        self.buttonOpen.clicked.connect(self.parseXML)
         self.buttonExit = QPushButton(getIcon('system-log-out'), "Exit")
         self.buttonExit.setToolTip('Exit timerulex')
         self.buttonExit.clicked.connect(self.exitClicked)
@@ -146,10 +163,16 @@ class TimeX(QMainWindow):
         self.rulesW.setLayout(self.ruleLayot)
         self.ruleScroll.setWidget(self.rulesW)
         self.ruleScroll.setWidgetResizable(True)
+        
+        self.ruleScroll.setFixedHeight(400)
+        self.ruleScroll.setFrameStyle(QFrame.NoFrame)
+        self.ruleScroll.setFrameShadow(QFrame.Plain)
+        
         self.commonLayout.addWidget(self.ruleScroll)
 # add rules strings        
         self.commonLayout.addWidget(self.buttonPrint)
         self.commonLayout.addWidget(self.buttonSave)
+        self.commonLayout.addWidget(self.buttonOpen)
         self.commonLayout.addWidget(self.buttonExit)
         self.setCentralWidget(window)
         self.show()
@@ -223,7 +246,23 @@ class TimeX(QMainWindow):
             #os.makedirs(self.homePath+os.sep+'.config')
             #self.conf = open(self.confPath, 'w+')
 #        finally:
- 
+
+
+
+    def parseXML(self):
+        xmlParser = QtXml.QXmlSimpleReader()
+        xmlContentHandler = myXmlContentHandler()
+        xmlFile = QtCore.QFile(self.pathInput.text())
+        #xmlFile = QtCore.QFile("myWidgets.xml")
+        xmlInputSource = QtXml.QXmlInputSource(xmlFile)    
+        xmlParser.setContentHandler(xmlContentHandler)  
+          
+        if(xmlParser.parse(xmlInputSource)):
+            print "Parsed Successfully!"
+        else:  
+            print "Parsing Failed!"
+
+
 class RuleString(QWidget):
     '''RuleString(QHBoxLayout) - rule string class'''
     def __init__(self, ruleOrder, ruleText = None):
