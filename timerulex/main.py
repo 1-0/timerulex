@@ -12,6 +12,7 @@ import ast
 
 from multiprocessing import Process
 
+import xml.etree.ElementTree as et
 
 #try:
 ##raise ImportError
@@ -39,10 +40,11 @@ if foundPySide:
         #QPixmap, QIcon, QMainWindow, QApplication, QGroupBox, QDialogButtonBox, QKeySequence, QDateTimeEdit, QTimeEdit, QComboBox, QScrollArea, QListWidget, QCalendarWidget, QFrame
     #LIB_USE = "PyQt"
 
+
 def _(strin):
     return strin
 
-__version__ = '''0.2.10'''
+__version__ = '''0.2.12'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -83,18 +85,6 @@ def getFileName(pathName, separatorSymbol=None):
         return pathName.split(os.path.sep)[-1]
 
 
-
-class myXmlContentHandler(QtXml.QXmlDefaultHandler):    
-
-    def startElement(self,nameSpaceURI,localName,qName,atts):
-        print "Read Start Tag : "+ localName+ "\n"
-        print "Tag Attributes: "        
-        for num in range(0, atts.length()):    
-            print  atts.type(num)+ "=" +atts.value(num)+"\n"    
-        print "#####################################\n\n"  
-        return True
-
-
 class TimeX(QMainWindow):
     """TimeX - gui time config"""
     def __init__(self, confPath = None, pathtoDir = None):
@@ -133,6 +123,7 @@ class TimeX(QMainWindow):
         pathLayout.addWidget(self.butAddRule)
         self.commonLayout.addLayout(pathLayout)
 
+        self.actLayout = QVBoxLayout()
         self.buttonPrint = QPushButton(getIcon('network-workgroup'), "Print")
         self.buttonPrint.setToolTip('Print all')
         self.buttonPrint.clicked.connect(self.printRules)
@@ -156,8 +147,8 @@ class TimeX(QMainWindow):
         #self.ruleScroll.setWidgetResizable(True)
         #self.commonLayout.addWidget(self.ruleScroll)
 # add rules strings
-        self.rulesW = QWidget()
         self.ruleScroll = QScrollArea()
+        self.rulesW = QWidget()
         self.ruleLayot = QVBoxLayout()
         self.addRule()
         self.rulesW.setLayout(self.ruleLayot)
@@ -168,12 +159,15 @@ class TimeX(QMainWindow):
         self.ruleScroll.setFrameStyle(QFrame.NoFrame)
         self.ruleScroll.setFrameShadow(QFrame.Plain)
         
-        self.commonLayout.addWidget(self.ruleScroll)
+        #self.commonLayout.addWidget(self.ruleScroll)
+        self.actLayout.addWidget(self.ruleScroll)
 # add rules strings        
-        self.commonLayout.addWidget(self.buttonPrint)
-        self.commonLayout.addWidget(self.buttonSave)
-        self.commonLayout.addWidget(self.buttonOpen)
-        self.commonLayout.addWidget(self.buttonExit)
+        self.actLayout.addWidget(self.buttonPrint)
+        self.actLayout.addWidget(self.buttonSave)
+        self.actLayout.addWidget(self.buttonOpen)
+        self.actLayout.addWidget(self.buttonExit)
+        
+        self.commonLayout.addLayout(self.actLayout)
         self.setCentralWidget(window)
         self.show()
 
@@ -223,12 +217,13 @@ class TimeX(QMainWindow):
         
     def xmlRules(self):
         '''xmlRules(self) get xml string rules'''
-        xxx = '<xml>'
+        xxx = '''<?xml version="1.0"?>
+<tariff>'''
         for rrr in self.ruleList:
             if not(rrr==None):
                 xxx += rrr.getRule(self.ruleList)
         xxx += '''
-</xml>'''
+</tariff>'''
         return xxx
         
     def printRules(self):
@@ -250,17 +245,23 @@ class TimeX(QMainWindow):
 
 
     def parseXML(self):
-        xmlParser = QtXml.QXmlSimpleReader()
-        xmlContentHandler = myXmlContentHandler()
-        xmlFile = QtCore.QFile(self.pathInput.text())
-        #xmlFile = QtCore.QFile("myWidgets.xml")
-        xmlInputSource = QtXml.QXmlInputSource(xmlFile)    
-        xmlParser.setContentHandler(xmlContentHandler)  
-          
-        if(xmlParser.parse(xmlInputSource)):
-            print "Parsed Successfully!"
-        else:  
-            print "Parsing Failed!"
+        try:
+            self.conf = open(self.pathInput.text(), 'r')
+            xmltext = self.conf.read()
+            self.conf.close()
+        except IOError:
+            print ("""open(self.pathInput.text(), 'r') - """+self.pathInput.text())
+
+        
+        tree = et.fromstring(xmltext)
+        
+        
+        for rule in tree.findall('rule'): # was: tree.xpath('//fruit')
+            rule.set('ruleTimeType', 'rotten %s' % (rule.get('ruleTimeType'),))
+
+        print et.tostring(tree) # removed argument: prettyprint
+        
+        
 
 
 class RuleString(QWidget):
@@ -328,6 +329,17 @@ class RuleString(QWidget):
 
     def getRule(self, RulesList):
         '''PrintRule(self) - Print Rule'''
+        
+        
+        #tariff = et.Element("tariff")
+        #rule = et.SubElement(tariff, "rule")
+
+        #et.SubElement(rule, "field1", name="blah")
+        #et.SubElement(rule, "field2", name="asdfasd")
+        #tree = et.ElementTree(tariff)
+        #print et.tostring(tree)
+
+        
         return '''
     <rule
         ruleOrderId="'''+str(RulesList.index(self))+'''"
