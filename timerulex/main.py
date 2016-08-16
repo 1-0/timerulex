@@ -12,8 +12,7 @@ import ast
 
 from multiprocessing import Process
 
-import xml.etree.ElementTree as et
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree
 
 from PySide import QtCore, QtXml
 from PySide.QtGui import *
@@ -22,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.3.3'''
+__version__ = '''0.4.3'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -152,6 +151,7 @@ class TimeX(QMainWindow):
         self.statusBar().showMessage('timerulex ver. ' + __version__)
 
     def addRule(self, rulePos=-1, ruleString=''):
+        '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
         self.ruleList.append(RuleString(len(self.ruleList)))
         #self.ruleList.insert(len(self.ruleList), RuleString(len(self.ruleList)))
         self.ruleLayot.insertWidget(len(self.ruleList), self.ruleList[rulePos])
@@ -195,28 +195,26 @@ class TimeX(QMainWindow):
         
     def xmlRules(self):
         '''xmlRules(self) get xml string rules'''
-        xxx = '''<?xml version="1.0"?>
-<tariff>'''
+        tree = xml.etree.ElementTree.Element('tariff')
         for rrr in self.ruleList:
             if not(rrr==None):
-                xxx += rrr.getRule(self.ruleList)
-        xxx += '''
-</tariff>'''
-        
-        return xxx
+                nnn = rrr.getRule(self.ruleList)
+                tree.append(nnn)
+        return xml.etree.ElementTree.ElementTree(tree)
         
     def printRules(self):
         '''PrintRules(self) - Print Rules'''
-        print(self.xmlRules())
+        tree = self.xmlRules()
+        #print(tree.text)
+        tree.write(sys.stdout)
+        #print(self.xmlRules().tostring())
 
     def saveRules(self):
         '''PrintRules(self) - Print Rules'''
         try:
-            #xxx = et.fromstring(self.xmlRules())
-            #xxx.write(pathInput.text())
-            self.conf = open(self.pathInput.text(), 'w')
-            self.conf.write(self.xmlRules())
-            self.conf.close()
+            tree = self.xmlRules()
+            tree.write(self.pathInput.text(), encoding="utf8", xml_declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', default_namespace=None, method="xml")
+            
         except IOError:
             print ("""can't open(self.pathInput.text(), 'w') - """+self.pathInput.text())
             #os.makedirs(self.homePath+os.sep+'.config')
@@ -224,8 +222,8 @@ class TimeX(QMainWindow):
 #        finally:
 
 
-
     def parseXML(self):
+        '''parseXML(self) - parse file from self.pathInput.text()'''
         try:
             self.conf = open(self.pathInput.text(), 'r')
             xmltext = self.conf.read()
@@ -234,16 +232,12 @@ class TimeX(QMainWindow):
             print ("""open(self.pathInput.text(), 'r') - """+self.pathInput.text())
             return
 
-        
-        tree = et.fromstring(xmltext)
-        
-        
-        for rule in tree.findall('rule'): # was: tree.xpath('//fruit')
-            rule.set('ruleTimeType', 'rotten %s' % (rule.get('ruleTimeType'),))
+        tree = xml.etree.ElementTree.fromstring(xmltext)
 
-        print et.tostring(tree) # removed argument: prettyprint
-        
-        
+        #for rule in tree.findall('rule'): # was: tree.xpath('//fruit')
+        #    rule.set('ruleTimeType', 'rotten %s' % (rule.get('ruleTimeType'),))
+
+        print (xml.etree.ElementTree.tostring(tree)) # removed argument: prettyprint
 
 
 class RuleString(QWidget):
@@ -311,36 +305,34 @@ class RuleString(QWidget):
 
     def getRule(self, RulesList):
         '''PrintRule(self) - Print Rule'''
-        
-        #root = ET.Element("html")
 
-        #head = ET.SubElement(root, "head")
+        root = xml.etree.ElementTree.Element("rule")
 
-        #title = ET.SubElement(head, "title")
-        #title.text = "Page Title"
+        orderid = xml.etree.ElementTree.SubElement(root, "OrderId")
+        orderid.text = str(RulesList.index(self))
 
-        #body = ET.SubElement(root, "body")
-        #body.set("bgcolor", "#ffffff")
+        starttime = xml.etree.ElementTree.SubElement(root, "StartTime")
+        starttime.text = self.ruleStartTime.time().toString(QtCore.Qt.ISODate)
 
-        #body.text = "Hello, World!"
+        startdate = xml.etree.ElementTree.SubElement(root, "StartDate")
+        startdate.text = self.ruleStartDate.selectedDate().toString(QtCore.Qt.ISODate)
 
-        ## wrap it in an ElementTree instance, and save as XML
-        #tree = ET.ElementTree(root)
-        #tree.write(sys.stdout)
-        #tree.write("page.xhtml")
-        
-        return '''
-    <rule>
-        <OrderId>'''+str(RulesList.index(self))+'''</OrderId>
-        <StartTime>'''+self.ruleStartTime.time().toString(QtCore.Qt.ISODate)+'''</StartTime>
-        <StartDate>'''+self.ruleStartDate.selectedDate().toString(QtCore.Qt.ISODate)+'''</StartDate>
-        <EndTime>'''+self.ruleEndTime.time().toString(QtCore.Qt.ISODate)+'''</EndTime>
-        <EndDate>'''+self.ruleEndDate.selectedDate().toString(QtCore.Qt.ISODate)+'''</EndDate>
-        <TimeType>'''+self.ruleTimeType.currentText()+'''</TimeType>
-        <SetType>'''+self.ruleSetType.currentText()+'''</SetType>
-        <Price>'''+self.rulePrice.text()+'''</Price>
-    </rule>'''
-        
+        endtime = xml.etree.ElementTree.SubElement(root, "EndTime")
+        endtime.text = self.ruleEndTime.time().toString(QtCore.Qt.ISODate)
+
+        enddate = xml.etree.ElementTree.SubElement(root, "EndDate")
+        enddate.text = self.ruleEndDate.selectedDate().toString(QtCore.Qt.ISODate)
+
+        timetype = xml.etree.ElementTree.SubElement(root, "TimeType")
+        timetype.text = self.ruleTimeType.currentText()
+
+        settype = xml.etree.ElementTree.SubElement(root, "SetType")
+        settype.text = self.ruleSetType.currentText()
+
+        price = xml.etree.ElementTree.SubElement(root, "Price")
+        price.text = self.rulePrice.text()
+
+        return root
 
 
 def usage(argsval):
