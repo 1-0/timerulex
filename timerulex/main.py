@@ -283,7 +283,8 @@ class RuleString(QWidget):
         self.priceStart = QLabel('Start: ')
         self.ruleLayout = QHBoxLayout()
         if self.ruleElement:
-            self.ruleStartTime = QTimeEdit(QtCore.QTime(self.ruleElement.find('StartTime').text, QtCore.Qt.ISODate))
+            self.ruleStartTime = QTimeEdit(QtCore.QTime(self.ruleElement.find('StartTime')[0].text, QtCore.Qt.ISODate))
+            print (self.ruleStartTime)
         else:
             self.ruleStartTime = QTimeEdit(nnn.currentDateTime().time())
         self.ruleStartTime.setToolTip('ruleStartTime')
@@ -292,6 +293,11 @@ class RuleString(QWidget):
         self.ruleStartDate.setFirstDayOfWeek(QtCore.Qt.DayOfWeek(1))
         self.priceEnd = QLabel('End: ')
         self.ruleEndTime = QDateTimeEdit(nnn.currentDateTime().time())
+        if self.ruleElement:
+            self.ruleEndTime = QTimeEdit(QtCore.QTime(self.ruleElement.find('EndTime')[0].text, QtCore.Qt.ISODate))
+            print (self.ruleEndTime)
+        else:
+            self.ruleEndTime = QTimeEdit(nnn.currentDateTime().time())
         self.ruleEndTime.setToolTip('ruleEndTime')
         self.ruleEndDate = QCalendarWidget()
         self.ruleEndDate.setToolTip('ruleEndDate')
