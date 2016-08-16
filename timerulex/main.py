@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.4.5'''
+__version__ = '''0.4.6'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -70,6 +70,7 @@ class TimeX(QMainWindow):
     def __init__(self, confPath = None, pathtoDir = None, pathToXML = None):
         '''__init__(self) - init TimeX instance'''
         super(TimeX, self).__init__()
+        #print (pathToXML)
         if pathtoDir:
             self.baseDir = pathtoDir
         else:
@@ -123,18 +124,26 @@ class TimeX(QMainWindow):
 
         window.setLayout(self.commonLayout)
 # add rules strings
-        #self.ruleScroll = QScrollArea()
-        #self.ruleLayot = QVBoxLayout()
-        #self.addRule()
-        #self.ruleScroll.setLayout(self.ruleLayot)
-        #self.ruleScroll.setWidget(self.ruleScroll)
-        #self.ruleScroll.setWidgetResizable(True)
-        #self.commonLayout.addWidget(self.ruleScroll)
-# add rules strings
         self.ruleScroll = QScrollArea()
         self.rulesW = QWidget()
         self.ruleLayot = QVBoxLayout()
-        self.addRule()
+        self.treeXml = None
+        try:
+            self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
+        except:
+            print ('can not open - ' + self.pathToXML)
+            self.addRule()
+            
+        if self.treeXml:
+            try:
+                self.rootXml = self.treeXml.getroot()
+                for ruleelement in self.rootXml.iter('rule'):
+                    self.addRule(ruleElement = ruleelement)
+            except:
+                print('can not parse - ' + str(self.rootXml))
+                self.addRule()
+            
+
         self.rulesW.setLayout(self.ruleLayot)
         self.ruleScroll.setWidget(self.rulesW)
         self.ruleScroll.setWidgetResizable(True)
@@ -157,9 +166,9 @@ class TimeX(QMainWindow):
 
         self.statusBar().showMessage('timerulex ver. ' + __version__)
 
-    def addRule(self, rulePos=-1, ruleString=''):
+    def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
-        self.ruleList.append(RuleString(len(self.ruleList)))
+        self.ruleList.append(RuleString(len(self.ruleList), ruleElement))
         #self.ruleList.insert(len(self.ruleList), RuleString(len(self.ruleList)))
         self.ruleLayot.insertWidget(len(self.ruleList), self.ruleList[rulePos])
         self.ruleScroll.update()
@@ -247,9 +256,14 @@ class TimeX(QMainWindow):
 
 class RuleString(QWidget):
     '''RuleString(QHBoxLayout) - rule string class'''
-    def __init__(self, ruleOrder, ruleText = None):
+    def __init__(self, ruleOrder, ruleElement = None):
         super(RuleString, self).__init__()
         self.ruleOrder = ruleOrder
+        if ruleElement:
+            print(ruleElement)
+            self.ruleElement = ruleElement
+        else:
+            self.ruleElement = None
         self.initRule()
         
     def initRule(self):
@@ -268,7 +282,10 @@ class RuleString(QWidget):
         
         self.priceStart = QLabel('Start: ')
         self.ruleLayout = QHBoxLayout()
-        self.ruleStartTime = QTimeEdit(nnn.currentDateTime().time())
+        if self.ruleElement:
+            self.ruleStartTime = QTimeEdit(QtCore.QTime(self.ruleElement.find('StartTime').text, QtCore.Qt.ISODate))
+        else:
+            self.ruleStartTime = QTimeEdit(nnn.currentDateTime().time())
         self.ruleStartTime.setToolTip('ruleStartTime')
         self.ruleStartDate = QCalendarWidget()
         self.ruleStartDate.setToolTip('ruleStartDate')
