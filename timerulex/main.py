@@ -15,37 +15,14 @@ from multiprocessing import Process
 import xml.etree.ElementTree as et
 import xml.etree.ElementTree as ET
 
-#try:
-##raise ImportError
-    #imp.find_module('PySide')
-    #foundPySide = True
-#except ImportError:
-    #print (u"""Try to use PyQt4
-#(license - http://www.riverbankcomputing.co.uk/software/pyqt/license )
-#instead of PySide
-#(license - LGPL - http://www.gnu.org/copyleft/lesser.html )""")
-    #foundPySide = False
-
-foundPySide = True
-
-if foundPySide:
-    from PySide import QtCore, QtXml
-    from PySide.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QPushButton,\
-        QLineEdit, QTextBrowser, QFileDialog, QDialog, QLabel, QCheckBox,\
-        QPixmap, QIcon, QMainWindow, QApplication, QGroupBox, QDialogButtonBox, QKeySequence, QDateTimeEdit, QTimeEdit, QComboBox, QScrollArea, QListWidget, QCalendarWidget, QFrame
-    LIB_USE = "PySide"
-#else:
-    #from PyQt4 import QtCore
-    #from PyQt4.QtGui import QWidget, QVBoxLayout, QHBoxLayout, QPushButton,\
-        #QLineEdit, QTextBrowser, QFileDialog, QDialog, QLabel, QCheckBox,\
-        #QPixmap, QIcon, QMainWindow, QApplication, QGroupBox, QDialogButtonBox, QKeySequence, QDateTimeEdit, QTimeEdit, QComboBox, QScrollArea, QListWidget, QCalendarWidget, QFrame
-    #LIB_USE = "PyQt"
+from PySide import QtCore, QtXml
+from PySide.QtGui import *
 
 
 def _(strin):
     return strin
 
-__version__ = '''0.3.2'''
+__version__ = '''0.3.3'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -225,6 +202,7 @@ class TimeX(QMainWindow):
                 xxx += rrr.getRule(self.ruleList)
         xxx += '''
 </tariff>'''
+        
         return xxx
         
     def printRules(self):
@@ -234,11 +212,13 @@ class TimeX(QMainWindow):
     def saveRules(self):
         '''PrintRules(self) - Print Rules'''
         try:
+            #xxx = et.fromstring(self.xmlRules())
+            #xxx.write(pathInput.text())
             self.conf = open(self.pathInput.text(), 'w')
             self.conf.write(self.xmlRules())
             self.conf.close()
         except IOError:
-            print ("""open(self.pathInput.text(), 'w') - """+self.pathInput.text())
+            print ("""can't open(self.pathInput.text(), 'w') - """+self.pathInput.text())
             #os.makedirs(self.homePath+os.sep+'.config')
             #self.conf = open(self.confPath, 'w+')
 #        finally:
@@ -350,15 +330,15 @@ class RuleString(QWidget):
         #tree.write("page.xhtml")
         
         return '''
-    <rule
-        ruleOrderId="'''+str(RulesList.index(self))+'''"
-        ruleStartTime="'''+self.ruleStartTime.time().toString(QtCore.Qt.ISODate)+'''"
-        ruleStartDate="'''+self.ruleStartDate.selectedDate().toString(QtCore.Qt.ISODate)+'''"
-        ruleEndTime="'''+self.ruleEndTime.time().toString(QtCore.Qt.ISODate)+'''"
-        ruleEndDate="'''+self.ruleEndDate.selectedDate().toString(QtCore.Qt.ISODate)+'''"
-        ruleTimeType="'''+self.ruleTimeType.currentText()+'''"
-        ruleSetType="'''+self.ruleSetType.currentText()+'''"
-        rulePrice="'''+self.rulePrice.text()+'''">
+    <rule>
+        <OrderId>'''+str(RulesList.index(self))+'''</OrderId>
+        <StartTime>'''+self.ruleStartTime.time().toString(QtCore.Qt.ISODate)+'''</StartTime>
+        <StartDate>'''+self.ruleStartDate.selectedDate().toString(QtCore.Qt.ISODate)+'''</StartDate>
+        <EndTime>'''+self.ruleEndTime.time().toString(QtCore.Qt.ISODate)+'''</EndTime>
+        <EndDate>'''+self.ruleEndDate.selectedDate().toString(QtCore.Qt.ISODate)+'''</EndDate>
+        <TimeType>'''+self.ruleTimeType.currentText()+'''</TimeType>
+        <SetType>'''+self.ruleSetType.currentText()+'''</SetType>
+        <Price>'''+self.rulePrice.text()+'''</Price>
     </rule>'''
         
 
