@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.4.12'''
+__version__ = '''0.4.14'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -70,7 +70,7 @@ class TimeX(QMainWindow):
     def __init__(self, confPath = None, pathtoDir = None, pathToXML = None):
         '''__init__(self) - init TimeX instance'''
         super(TimeX, self).__init__()
-        #print (pathToXML)
+        
         if pathtoDir:
             self.baseDir = pathtoDir
         else:
@@ -144,7 +144,6 @@ class TimeX(QMainWindow):
             try:
                 self.rootXml = self.treeXml.getroot()
                 for ruleelement in self.rootXml.iter('rule'):
-                    #print (str(ruleelement))
                     self.addRule(ruleElement = ruleelement)
             except:
                 print('can not parse - ' + str(self.rootXml))
@@ -176,7 +175,6 @@ class TimeX(QMainWindow):
     def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
         newrule = RuleString(len(self.ruleList), ruleElement)
-        #print str(newrule)
         self.ruleList.append(newrule)
         
         #self.ruleList.insert(len(self.ruleList), RuleString(len(self.ruleList)))
@@ -198,7 +196,6 @@ class TimeX(QMainWindow):
         if self.path:
             if type(self.path) is tuple: #for PySide
                 self.path = self.path[0]
-                #print self.path
 
             self.startPath = self.path[:-len(getFileName(self.path))]
             if self.path:
@@ -238,10 +235,10 @@ class TimeX(QMainWindow):
         try:
             tree = self.xmlRules()
             #print ('tree to write - '+ str(tree))
-            print 'save result - ' + str(tree.write(self.pathInput.text(), encoding="utf8", 
+            tree.write(self.pathInput.text(), encoding="utf8", 
             xml_declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', 
             default_namespace=None, method="xml")
-            )
+            
         except IOError:
             print ("""can't open(self.pathInput.text(), 'w') - """+self.pathInput.text())
             #os.makedirs(self.homePath+os.sep+'.config')
@@ -272,10 +269,9 @@ class RuleString(QWidget):
     def __init__(self, ruleOrder, ruleElement = None):
         super(RuleString, self).__init__()
         self.ruleOrder = ruleOrder
-        #print str(self.ruleOrder)
-        #print str(ruleElement)
         self.RULE_TIME_TIPES = ['Minute', 'Hour', 'Day', 'Week', 'Month', 'Year']
         self.RULE_SET_TIPES = ['Time-based', 'Discount', 'Subscription']
+        
         if not (ruleElement == None):
             self.ruleElement = ruleElement
             self.initRuleXml()
@@ -472,6 +468,9 @@ def main(argsval):
     elif argsval[1]=='-v':
         print (VERSION_INFO % __version__)
         sys.exit()
+    elif os.path.isfile(argsval[1]) and argsval[1][:-4]=='.xml':
+        pathToXML = argsval[1]
+        
 
     app = QApplication(argsval)
     w = TimeX(confPath, pathToDir, pathToXML)
