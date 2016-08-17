@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.4.6'''
+__version__ = '''0.4.8'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -123,7 +123,7 @@ class TimeX(QMainWindow):
         self.buttonExit.clicked.connect(self.exitClicked)
 
         window.setLayout(self.commonLayout)
-# add rules strings
+# +++ add rules strings
         self.ruleScroll = QScrollArea()
         self.rulesW = QWidget()
         self.ruleLayot = QVBoxLayout()
@@ -138,6 +138,7 @@ class TimeX(QMainWindow):
             try:
                 self.rootXml = self.treeXml.getroot()
                 for ruleelement in self.rootXml.iter('rule'):
+                    #print (str(ruleelement))
                     self.addRule(ruleElement = ruleelement)
             except:
                 print('can not parse - ' + str(self.rootXml))
@@ -154,7 +155,7 @@ class TimeX(QMainWindow):
         
         self.commonLayout.addWidget(self.ruleScroll)
         #self.actLayout.addWidget(self.ruleScroll)
-# add rules strings        
+# --- add rules strings
         self.actLayout.addWidget(self.buttonPrint)
         self.actLayout.addWidget(self.buttonSave)
         self.actLayout.addWidget(self.buttonOpen)
@@ -168,7 +169,10 @@ class TimeX(QMainWindow):
 
     def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
-        self.ruleList.append(RuleString(len(self.ruleList), ruleElement))
+        newrule = RuleString(len(self.ruleList), ruleElement)
+        #print str(newrule)
+        self.ruleList.append(newrule)
+        
         #self.ruleList.insert(len(self.ruleList), RuleString(len(self.ruleList)))
         self.ruleLayot.insertWidget(len(self.ruleList), self.ruleList[rulePos])
         self.ruleScroll.update()
@@ -210,7 +214,7 @@ class TimeX(QMainWindow):
         event.accept()
         
     def xmlRules(self):
-        '''xmlRules(self) get xml string rules'''
+        '''xmlRules(self) get xml rules for print or save'''
         tree = xml.etree.ElementTree.Element('tariff')
         for rrr in self.ruleList:
             if not(rrr==None):
@@ -227,8 +231,11 @@ class TimeX(QMainWindow):
         '''PrintRules(self) - Print Rules'''
         try:
             tree = self.xmlRules()
-            tree.write(self.pathInput.text(), encoding="utf8", xml_declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', default_namespace=None, method="xml")
-            
+            #print ('tree to write - '+ str(tree))
+            print 'save result - ' + str(tree.write(self.pathInput.text(), encoding="utf8", 
+            xml_declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', 
+            default_namespace=None, method="xml")
+            )
         except IOError:
             print ("""can't open(self.pathInput.text(), 'w') - """+self.pathInput.text())
             #os.makedirs(self.homePath+os.sep+'.config')
@@ -259,8 +266,9 @@ class RuleString(QWidget):
     def __init__(self, ruleOrder, ruleElement = None):
         super(RuleString, self).__init__()
         self.ruleOrder = ruleOrder
-        if ruleElement:
-            print(ruleElement)
+        #print str(self.ruleOrder)
+        #print str(ruleElement)
+        if not (ruleElement == None):
             self.ruleElement = ruleElement
         else:
             self.ruleElement = None
@@ -276,15 +284,17 @@ class RuleString(QWidget):
         self.orderRule.setStyleSheet("QLabel {font-size : 40px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
         #self.orderRule("QLabel {font-size : 400px; color : blue; background-image: url('tmp/test.jpg');}");
         
-        
-        #self.graphics = QtGui.QGraphicsScene()
-
-        
         self.priceStart = QLabel('Start: ')
         self.ruleLayout = QHBoxLayout()
-        if self.ruleElement:
-            self.ruleStartTime = QTimeEdit(QtCore.QTime(self.ruleElement.find('StartTime')[0].text, QtCore.Qt.ISODate))
-            print (self.ruleStartTime)
+        
+        if not(self.ruleElement == None):
+            stimetext = self.ruleElement.find('StartTime').text
+            #sdatetext = self.ruleElement.find('StartDate').text
+            #sdatetext = sdatetext+'T'+stimetext
+            #print (sdatetext)
+            stime = QtCore.QTime(int(stimetext[:2]), int(stimetext[3:5]))
+            #stime = QtCore.QTime(sdatetext, Qt.ISODate)
+            self.ruleStartTime = QTimeEdit(stime)
         else:
             self.ruleStartTime = QTimeEdit(nnn.currentDateTime().time())
         self.ruleStartTime.setToolTip('ruleStartTime')
@@ -293,9 +303,10 @@ class RuleString(QWidget):
         self.ruleStartDate.setFirstDayOfWeek(QtCore.Qt.DayOfWeek(1))
         self.priceEnd = QLabel('End: ')
         self.ruleEndTime = QDateTimeEdit(nnn.currentDateTime().time())
-        if self.ruleElement:
-            self.ruleEndTime = QTimeEdit(QtCore.QTime(self.ruleElement.find('EndTime')[0].text, QtCore.Qt.ISODate))
-            print (self.ruleEndTime)
+        if not(self.ruleElement == None):
+            etimetext = self.ruleElement.find('EndTime').text
+            self.ruleEndTime = QTimeEdit(QtCore.QTime(int(etimetext[:2]), int(etimetext[3:5])))
+            #self.ruleEndTime = QTimeEdit(QtCore.QTime(self.ruleElement.find('EndTime').text, QtCore.Qt.TextDate))
         else:
             self.ruleEndTime = QTimeEdit(nnn.currentDateTime().time())
         self.ruleEndTime.setToolTip('ruleEndTime')
