@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.4.10'''
+__version__ = '''0.4.11'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -134,6 +134,12 @@ class TimeX(QMainWindow):
             print ('can not open - ' + self.pathToXML)
             self.addRule()
             
+        #~ if self.treeXml:
+            #~ self.rootXml = self.treeXml.getroot()
+            #~ for ruleelement in self.rootXml.iter('rule'):
+                #~ #print (str(ruleelement))
+                #~ self.addRule(ruleElement = ruleelement)
+                
         if self.treeXml:
             try:
                 self.rootXml = self.treeXml.getroot()
@@ -268,6 +274,8 @@ class RuleString(QWidget):
         self.ruleOrder = ruleOrder
         #print str(self.ruleOrder)
         #print str(ruleElement)
+        self.RULE_TIME_TIPES = ['Minute', 'Hour', 'Day', 'Week', 'Month', 'Year']
+        self.RULE_SET_TIPES = ['Time-based', 'Discount', 'Subscription']
         if not (ruleElement == None):
             self.ruleElement = ruleElement
             self.initRuleXml()
@@ -304,18 +312,13 @@ class RuleString(QWidget):
         self.ruleEndDate.setToolTip('ruleEndDate')
         self.ruleTimeType = QComboBox()
         self.ruleTimeType.setEditable(False)
-        self.ruleTimeType.addItem('Minute')
-        self.ruleTimeType.addItem('Hour')
-        self.ruleTimeType.addItem('Day')
-        self.ruleTimeType.addItem('Week')
-        self.ruleTimeType.addItem('Month')
-        self.ruleTimeType.addItem('Year')
+        for tt in self.RULE_TIME_TIPES:
+            self.ruleTimeType.addItem(tt)
         self.ruleTimeType.setToolTip('ruleTimeType')
         self.ruleSetType = QComboBox()
         self.ruleSetType.setEditable(False)
-        self.ruleSetType.addItem('Time-based')
-        self.ruleSetType.addItem('Discount')
-        self.ruleSetType.addItem('Subscription')
+        for st in self.RULE_SET_TIPES:
+            self.ruleSetType.addItem(st)
         self.ruleSetType.setToolTip('ruleSetType')
         self.priceLabel = QLabel('Price: ')
         self.rulePrice = QLineEdit('1')
@@ -375,17 +378,24 @@ class RuleString(QWidget):
         self.ruleEndDate.setCalendarPopup(True)
         self.ruleEndDate.setToolTip('ruleEndDate')
         self.ruleTimeType = QComboBox()
-        self.ruleTimeType.addItem('Minute')
-        self.ruleTimeType.addItem('Hour')
-        self.ruleTimeType.addItem('Day')
-        self.ruleTimeType.addItem('Week')
-        self.ruleTimeType.addItem('Month')
-        self.ruleTimeType.addItem('Year')
+        self.ruleTimeType.setEditable(False)
+        
+        TimeTypetext = self.ruleElement.find('TimeType').text
+        for tt in self.RULE_TIME_TIPES:
+            self.ruleTimeType.addItem(tt)
+        numbtt = self.RULE_TIME_TIPES.index(TimeTypetext)
+        self.ruleTimeType.setCurrentIndex(numbtt)
+        
         self.ruleTimeType.setToolTip('ruleTimeType')
         self.ruleSetType = QComboBox()
-        self.ruleSetType.addItem('Time-based')
-        self.ruleSetType.addItem('Discount')
-        self.ruleSetType.addItem('Subscription')
+        self.ruleSetType.setEditable(False)
+        for st in self.RULE_SET_TIPES:
+            self.ruleSetType.addItem(st)
+        SetTypetext = self.ruleElement.find('SetType').text
+        numbst = self.RULE_SET_TIPES.index(SetTypetext)
+        self.ruleSetType.setCurrentIndex(numbst)
+        
+        
         self.ruleSetType.setToolTip('ruleSetType')
         self.priceLabel = QLabel('Price: ')
         
