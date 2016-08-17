@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.4.8'''
+__version__ = '''0.4.9'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -270,9 +270,10 @@ class RuleString(QWidget):
         #print str(ruleElement)
         if not (ruleElement == None):
             self.ruleElement = ruleElement
+            self.initRuleXml()
         else:
             self.ruleElement = None
-        self.initRule()
+            self.initRule()
         
     def initRule(self):
         '''initRule(self) - init rule ui'''
@@ -287,32 +288,101 @@ class RuleString(QWidget):
         self.priceStart = QLabel('Start: ')
         self.ruleLayout = QHBoxLayout()
         
-        if not(self.ruleElement == None):
-            stimetext = self.ruleElement.find('StartTime').text
-            #sdatetext = self.ruleElement.find('StartDate').text
-            #sdatetext = sdatetext+'T'+stimetext
-            #print (sdatetext)
-            stime = QtCore.QTime(int(stimetext[:2]), int(stimetext[3:5]))
-            #stime = QtCore.QTime(sdatetext, Qt.ISODate)
-            self.ruleStartTime = QTimeEdit(stime)
-        else:
-            self.ruleStartTime = QTimeEdit(nnn.currentDateTime().time())
+        self.ruleStartTime = QTimeEdit(nnn.currentDateTime().time())
+        
         self.ruleStartTime.setToolTip('ruleStartTime')
-        self.ruleStartDate = QCalendarWidget()
+        #self.ruleStartDate = QCalendarWidget()
+        self.ruleStartDate = QDateEdit()
+        self.ruleStartDate.setCalendarPopup(True)
         self.ruleStartDate.setToolTip('ruleStartDate')
-        self.ruleStartDate.setFirstDayOfWeek(QtCore.Qt.DayOfWeek(1))
+        #self.ruleStartDate.setFirstDayOfWeek(QtCore.Qt.DayOfWeek(1))
         self.priceEnd = QLabel('End: ')
         self.ruleEndTime = QDateTimeEdit(nnn.currentDateTime().time())
-        if not(self.ruleElement == None):
-            etimetext = self.ruleElement.find('EndTime').text
-            self.ruleEndTime = QTimeEdit(QtCore.QTime(int(etimetext[:2]), int(etimetext[3:5])))
-            #self.ruleEndTime = QTimeEdit(QtCore.QTime(self.ruleElement.find('EndTime').text, QtCore.Qt.TextDate))
-        else:
-            self.ruleEndTime = QTimeEdit(nnn.currentDateTime().time())
+        
+        self.ruleEndTime = QTimeEdit(nnn.currentDateTime().time())
+        
         self.ruleEndTime.setToolTip('ruleEndTime')
-        self.ruleEndDate = QCalendarWidget()
+        #self.ruleEndDate = QCalendarWidget()
+        self.ruleEndDate = QDateEdit()
+        self.ruleEndDate.setCalendarPopup(True)
         self.ruleEndDate.setToolTip('ruleEndDate')
-        self.ruleEndDate.setFirstDayOfWeek(QtCore.Qt.DayOfWeek(1))
+        #self.ruleEndDate.setFirstDayOfWeek(QtCore.Qt.DayOfWeek(1))
+        self.ruleTimeType = QComboBox()
+        self.ruleTimeType.setEditable(False)
+        self.ruleTimeType.addItem('Minute')
+        self.ruleTimeType.addItem('Hour')
+        self.ruleTimeType.addItem('Day')
+        self.ruleTimeType.addItem('Week')
+        self.ruleTimeType.addItem('Month')
+        self.ruleTimeType.addItem('Year')
+        self.ruleTimeType.setToolTip('ruleTimeType')
+        self.ruleSetType = QComboBox()
+        self.ruleSetType.setEditable(False)
+        self.ruleSetType.addItem('Time-based')
+        self.ruleSetType.addItem('Discount')
+        self.ruleSetType.addItem('Subscription')
+        self.ruleSetType.setToolTip('ruleSetType')
+        self.priceLabel = QLabel('Price: ')
+        self.rulePrice = QLineEdit('1')
+        self.rulePrice.setToolTip('rulePrice')
+        
+        self.ruleLayout.addWidget(self.orderRule)
+        
+        #self.ruleLayout.addWidget(self.graphics)
+        
+        self.ruleLayout.addWidget(self.priceStart)
+        self.ruleLayout.addWidget(self.ruleStartTime)
+        self.ruleLayout.addWidget(self.ruleStartDate)
+        self.ruleLayout.addWidget(self.priceEnd)
+        self.ruleLayout.addWidget(self.ruleEndTime)
+        self.ruleLayout.addWidget(self.ruleEndDate)
+        self.ruleLayout.addWidget(self.ruleTimeType)
+        self.ruleLayout.addWidget(self.ruleSetType)
+        self.ruleLayout.addWidget(self.priceLabel)
+        self.ruleLayout.addWidget(self.rulePrice)
+        
+        self.setLayout(self.ruleLayout)
+        
+    def initRuleXml(self):
+        '''initRule(self) - init rule ui'''
+        
+        nnn = QtCore.QDateTime()
+        
+        self.orderRule = QLabel('#' + str(self.ruleOrder) +' ')
+        
+        self.orderRule.setStyleSheet("QLabel {font-size : 40px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
+        #self.orderRule("QLabel {font-size : 400px; color : blue; background-image: url('tmp/test.jpg');}");
+        
+        self.priceStart = QLabel('Start: ')
+        self.ruleLayout = QHBoxLayout()
+        
+        stimetext = self.ruleElement.find('StartTime').text
+        #sdatetext = self.ruleElement.find('StartDate').text
+        #sdatetext = sdatetext+'T'+stimetext
+        #print (sdatetext)
+        stime = QtCore.QTime(int(stimetext[:2]), int(stimetext[3:5]))
+        #stime = QtCore.QTime(sdatetext, Qt.ISODate)
+        self.ruleStartTime = QTimeEdit(stime)
+        
+        self.ruleStartTime.setToolTip('ruleStartTime')
+        #self.ruleStartDate = QCalendarWidget()
+        self.ruleStartDate = QDateEdit(nnn.currentDateTime().date())
+        self.ruleStartDate.setCalendarPopup(True)
+        self.ruleStartDate.setToolTip('ruleStartDate')
+        #self.ruleStartDate.setFirstDayOfWeek(QtCore.Qt.DayOfWeek(1))
+        self.priceEnd = QLabel('End: ')
+        #self.ruleEndTime = QDateTimeEdit(nnn.currentDateTime().time())
+        
+        etimetext = self.ruleElement.find('EndTime').text
+        self.ruleEndTime = QTimeEdit(QtCore.QTime(int(etimetext[:2]), int(etimetext[3:5])))
+        #self.ruleEndTime = QTimeEdit(QtCore.QTime(self.ruleElement.find('EndTime').text, QtCore.Qt.TextDate))
+        
+        self.ruleEndTime.setToolTip('ruleEndTime')
+        #self.ruleEndDate = QCalendarWidget()
+        self.ruleEndDate = QDateEdit(nnn.currentDateTime().date())
+        self.ruleEndDate.setCalendarPopup(True)
+        self.ruleEndDate.setToolTip('ruleEndDate')
+        #self.ruleEndDate.setFirstDayOfWeek(QtCore.Qt.DayOfWeek(1))
         self.ruleTimeType = QComboBox()
         self.ruleTimeType.addItem('Minute')
         self.ruleTimeType.addItem('Hour')
@@ -327,7 +397,11 @@ class RuleString(QWidget):
         self.ruleSetType.addItem('Subscription')
         self.ruleSetType.setToolTip('ruleSetType')
         self.priceLabel = QLabel('Price: ')
-        self.rulePrice = QLineEdit('1')
+        
+        pricetext = self.ruleElement.find('Price').text
+        
+        self.rulePrice = QLineEdit(pricetext)
+        #self.rulePrice = QLineEdit('1')
         self.rulePrice.setToolTip('rulePrice')
         
         self.ruleLayout.addWidget(self.orderRule)
@@ -365,13 +439,15 @@ class RuleString(QWidget):
         starttime.text = self.ruleStartTime.time().toString(QtCore.Qt.ISODate)
 
         startdate = xml.etree.ElementTree.SubElement(root, "StartDate")
-        startdate.text = self.ruleStartDate.selectedDate().toString(QtCore.Qt.ISODate)
+        #startdate.text = self.ruleStartDate.selectedDate().toString(QtCore.Qt.ISODate)
+        startdate.text = self.ruleStartDate.date().toString(QtCore.Qt.ISODate)
 
         endtime = xml.etree.ElementTree.SubElement(root, "EndTime")
         endtime.text = self.ruleEndTime.time().toString(QtCore.Qt.ISODate)
 
         enddate = xml.etree.ElementTree.SubElement(root, "EndDate")
-        enddate.text = self.ruleEndDate.selectedDate().toString(QtCore.Qt.ISODate)
+        #enddate.text = self.ruleEndDate.selectedDate().toString(QtCore.Qt.ISODate)
+        enddate.text = self.ruleEndDate.date().toString(QtCore.Qt.ISODate)
 
         timetype = xml.etree.ElementTree.SubElement(root, "TimeType")
         timetype.text = self.ruleTimeType.currentText()
