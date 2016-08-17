@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.4.11'''
+__version__ = '''0.4.12'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -286,6 +286,8 @@ class RuleString(QWidget):
     def initRule(self):
         '''initRule(self) - init rule ui'''
         
+        self.ruleLayout = QHBoxLayout()
+        
         nnn = QtCore.QDateTime()
         
         self.orderRule = QLabel('#' + str(self.ruleOrder) +' ')
@@ -293,16 +295,12 @@ class RuleString(QWidget):
         self.orderRule.setStyleSheet("QLabel {font-size : 40px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
         #self.orderRule("QLabel {font-size : 400px; color : blue; background-image: url('tmp/test.jpg');}");
         
-        self.priceStart = QLabel('Start: ')
-        self.ruleLayout = QHBoxLayout()
-        
         self.ruleStartTime = QTimeEdit(nnn.currentDateTime().time())
         
         self.ruleStartTime.setToolTip('ruleStartTime')
         self.ruleStartDate = QDateEdit(nnn.currentDateTime().date())
         self.ruleStartDate.setCalendarPopup(True)
         self.ruleStartDate.setToolTip('ruleStartDate')
-        self.priceEnd = QLabel('End: ')
         self.ruleEndTime = QDateTimeEdit(nnn.currentDateTime().time())
         self.ruleEndTime = QTimeEdit(nnn.currentDateTime().time())
         
@@ -320,37 +318,20 @@ class RuleString(QWidget):
         for st in self.RULE_SET_TIPES:
             self.ruleSetType.addItem(st)
         self.ruleSetType.setToolTip('ruleSetType')
-        self.priceLabel = QLabel('Price: ')
         self.rulePrice = QLineEdit('1')
         self.rulePrice.setToolTip('rulePrice')
         
-        self.ruleLayout.addWidget(self.orderRule)
-        
-        self.ruleLayout.addWidget(self.priceStart)
-        self.ruleLayout.addWidget(self.ruleStartTime)
-        self.ruleLayout.addWidget(self.ruleStartDate)
-        self.ruleLayout.addWidget(self.priceEnd)
-        self.ruleLayout.addWidget(self.ruleEndTime)
-        self.ruleLayout.addWidget(self.ruleEndDate)
-        self.ruleLayout.addWidget(self.ruleTimeType)
-        self.ruleLayout.addWidget(self.ruleSetType)
-        self.ruleLayout.addWidget(self.priceLabel)
-        self.ruleLayout.addWidget(self.rulePrice)
-        
-        self.setLayout(self.ruleLayout)
-        
+        self.endInit()
+
     def initRuleXml(self):
         '''initRule(self) - init rule ui'''
         
-        nnn = QtCore.QDateTime()
+        self.ruleLayout = QHBoxLayout()
         
         self.orderRule = QLabel('#' + str(self.ruleOrder) +' ')
         
         self.orderRule.setStyleSheet("QLabel {font-size : 40px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
         #self.orderRule("QLabel {font-size : 400px; color : blue; background-image: url('tmp/test.jpg');}");
-        
-        self.priceStart = QLabel('Start: ')
-        self.ruleLayout = QHBoxLayout()
         
         stimetext = self.ruleElement.find('StartTime').text
         stime = QtCore.QTime(int(stimetext[:2]), int(stimetext[3:5]))
@@ -364,7 +345,6 @@ class RuleString(QWidget):
         self.ruleStartDate = QDateEdit(sdate)
         self.ruleStartDate.setCalendarPopup(True)
         self.ruleStartDate.setToolTip('ruleStartDate')
-        self.priceEnd = QLabel('End: ')
         
         etimetext = self.ruleElement.find('EndTime').text
         self.ruleEndTime = QTimeEdit(QtCore.QTime(int(etimetext[:2]), int(etimetext[3:5])))
@@ -395,14 +375,21 @@ class RuleString(QWidget):
         numbst = self.RULE_SET_TIPES.index(SetTypetext)
         self.ruleSetType.setCurrentIndex(numbst)
         
-        
         self.ruleSetType.setToolTip('ruleSetType')
-        self.priceLabel = QLabel('Price: ')
         
         pricetext = self.ruleElement.find('Price').text
         
         self.rulePrice = QLineEdit(pricetext)
         self.rulePrice.setToolTip('rulePrice')
+        
+        self.endInit()
+        
+    def endInit(self):
+        '''endInit(self) - end init'''
+        
+        self.priceStart = QLabel('Start: ')
+        self.priceEnd = QLabel('End: ')
+        self.priceLabel = QLabel('Price: ')
         
         self.ruleLayout.addWidget(self.orderRule)
         self.ruleLayout.addWidget(self.priceStart)
@@ -417,6 +404,7 @@ class RuleString(QWidget):
         self.ruleLayout.addWidget(self.rulePrice)
         
         self.setLayout(self.ruleLayout)
+        
 
 
     def PrintRule(self, RulesList):
