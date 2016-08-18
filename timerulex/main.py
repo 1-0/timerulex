@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.5.8'''
+__version__ = '''0.5.9'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -150,29 +150,31 @@ class TimeX(QMainWindow):
         self.ruleScroll = QScrollArea()
         self.rulesW = QWidget()
         self.ruleLayot = QVBoxLayout()
-        if treeXml ==None:
-            self.treeXml = None
-            try:
-                self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
-            except:
-                print ('can not open - ' + self.pathToXML)
-                self.addRule()
-        else:
-            self.treeXml = treeXml
+        #~ if treeXml ==None:
+            #~ self.treeXml = None
+            #~ try:
+                #~ self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
+            #~ except:
+                #~ print ('can not open - ' + self.pathToXML)
+                #~ self.addRule()
+        #~ else:
+            #~ self.treeXml = treeXml
             
-        #~ if self.treeXml:
-            #~ self.rootXml = self.treeXml.getroot()
-            #~ for ruleelement in self.rootXml.iter('rule'):
-                #~ #print (str(ruleelement))
-                #~ self.addRule(ruleElement = ruleelement)
+        if treeXml == None:
+            self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
+            self.rootXml = self.treeXml.getroot()
+            #for ruleelement in self.rootXml.iter('rule'):
+                #print (str(ruleelement))
+                #self.addRule(ruleElement = ruleelement)
+            self.addOrderedRules()
                 
-        if self.treeXml:
-            try:
-                self.rootXml = self.treeXml.getroot()
-                self.addOrderedRules()
-            except:
-                print('can not parse - ' + str(self.rootXml))
-                self.addRule()
+        #~ if self.treeXml:
+            #~ try:
+                #~ self.rootXml = self.treeXml.getroot()
+                #~ self.addOrderedRules()
+            #~ except:
+                #~ print('can not parse - ' + str(self.rootXml))
+                #~ self.addRule()
             
 
         self.rulesW.setLayout(self.ruleLayot)
@@ -191,8 +193,23 @@ class TimeX(QMainWindow):
         ruleIter = (self.rootXml.iter('rule'))
         lenRules = sum(1 for _ in ruleIter)
         #print('lenRules------'+str(lenRules))
-        for ruleelement in self.rootXml.iter('rule'):
-            self.addRule(ruleElement = ruleelement)
+        for iii in range(lenRules):
+            ruleElement = self.getRuleByOrderId(iii)
+            if not(ruleElement==None):
+                self.addRule(ruleElement = ruleElement)
+
+    def getRuleByOrderId(self, ruleid):
+        '''getRuleByOrderId(self) - get rule by OrderId=ruleid'''
+        for ruleElement in self.rootXml.iter('rule'):
+            if self.getRuleOrder(ruleElement)==ruleid:
+                return ruleElement
+        raise ValueError('No rule for OrderId %d' % ruleid)
+
+    def getRuleOrder(self, ruleElement):
+        '''getRuleOrder(ruleElement) - get rule OrderId'''
+        orderId = ruleElement.find('OrderId').text
+        #print ('OrderId------'+orderId)
+        return int(orderId)
 
     def removeRules(self):
         '''removeRules(self) - remove all rules'''
