@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.5.6'''
+__version__ = '''0.5.8'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -145,17 +145,20 @@ class TimeX(QMainWindow):
 
         self.statusBar().showMessage('timerulex ver. ' + __version__)
 
-    def initRules(self):
+    def initRules(self, treeXml = None):
         '''initRules(self) - init rules'''
         self.ruleScroll = QScrollArea()
         self.rulesW = QWidget()
         self.ruleLayot = QVBoxLayout()
-        self.treeXml = None
-        try:
-            self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
-        except:
-            print ('can not open - ' + self.pathToXML)
-            self.addRule()
+        if treeXml ==None:
+            self.treeXml = None
+            try:
+                self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
+            except:
+                print ('can not open - ' + self.pathToXML)
+                self.addRule()
+        else:
+            self.treeXml = treeXml
             
         #~ if self.treeXml:
             #~ self.rootXml = self.treeXml.getroot()
@@ -166,8 +169,7 @@ class TimeX(QMainWindow):
         if self.treeXml:
             try:
                 self.rootXml = self.treeXml.getroot()
-                for ruleelement in self.rootXml.iter('rule'):
-                    self.addRule(ruleElement = ruleelement)
+                self.addOrderedRules()
             except:
                 print('can not parse - ' + str(self.rootXml))
                 self.addRule()
@@ -183,6 +185,14 @@ class TimeX(QMainWindow):
         
         self.layoutForRules.addWidget(self.ruleScroll)
         #self.actLayout.addWidget(self.ruleScroll)
+
+    def addOrderedRules(self):
+        '''addOrderedRules(self) - add ordered rules'''
+        ruleIter = (self.rootXml.iter('rule'))
+        lenRules = sum(1 for _ in ruleIter)
+        #print('lenRules------'+str(lenRules))
+        for ruleelement in self.rootXml.iter('rule'):
+            self.addRule(ruleElement = ruleelement)
 
     def removeRules(self):
         '''removeRules(self) - remove all rules'''
