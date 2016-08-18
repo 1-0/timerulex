@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.6'''
+__version__ = '''0.6.8'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -91,7 +91,7 @@ class TimeX(QMainWindow):
         '''initUI(self) - init Ui timerulex'''
         self.statusBar()
         self.setWindowIcon(getIcon('document-save'))
-        self.setMinimumSize(940, 480)
+        self.setMinimumSize(740, 480)
         self.setWindowTitle(u'timeruleX')
 
         window = QWidget()
@@ -100,6 +100,7 @@ class TimeX(QMainWindow):
         pathLayout = QHBoxLayout()
         self.pathLabel = QLabel("Path Rule: ")
         self.pathInput = QLineEdit(self.pathToXML)
+        self.pathInput.setReadOnly(True)
         self.buttonPath = QPushButton(getIcon('system-lock-screen'), "Select Rule")
         self.buttonPath.setToolTip('Select rule file')
         self.buttonPath.clicked.connect(self.selectFileRule)
@@ -289,12 +290,18 @@ class TimeX(QMainWindow):
 
     def exitClicked(self):
         '''exitClicked(self) - exit clicked'''
-        sys.exit()
+        exitcheck = QMessageBox.warning(self, 'Confirm exit','Confirm exit timerulex', QMessageBox.Yes | QMessageBox.No)
+        if exitcheck==QMessageBox.Yes:
+            sys.exit()
 
     def closeEvent(self, event):
         '''closeEvent(self) - close button clicked'''
-        self.exitClicked()
-        event.accept()
+        exitcheck = QMessageBox.warning(self, 'Confirm exit','Confirm exit timerulex', QMessageBox.Yes | QMessageBox.No)
+        if exitcheck==QMessageBox.Yes:
+            event.accept()
+            sys.exit()
+        else:
+             event.ignore()
         
     def xmlRules(self):
         '''xmlRules(self) get xml rules for print or save'''
@@ -337,24 +344,26 @@ class TimeX(QMainWindow):
 
     def openXML(self):
         '''openXML(self) - parse file from self.pathInput.text()'''
-        try:
-            self.conf = open(self.pathInput.text(), 'r')
-            xmltext = self.conf.read()
-            self.conf.close()
-        except IOError:
-            print ("""open(self.pathInput.text(), 'r') - """+self.pathInput.text())
-            QMessageBox.warning(self, 'Error open xml','Can not open xml "%s"'%self.pathInput.text())
-            return
+        opencheck = QMessageBox.warning(self, 'Confirm open xml file','Confirm open xml file "%s" and lost unsaved rules'%self.pathInput.text(), QMessageBox.Yes | QMessageBox.No)
+        if opencheck==QMessageBox.Yes:
+            try:
+                self.conf = open(self.pathInput.text(), 'r')
+                xmltext = self.conf.read()
+                self.conf.close()
+            except IOError:
+                print ("""open(self.pathInput.text(), 'r') - """+self.pathInput.text())
+                QMessageBox.warning(self, 'Error open xml','Can not open xml "%s"'%self.pathInput.text())
+                return
 
-        tree = xml.etree.ElementTree.fromstring(xmltext)
+            tree = xml.etree.ElementTree.fromstring(xmltext)
 
-        #for rule in tree.findall('rule'): # was: tree.xpath('//fruit')
-        #    rule.set('ruleTimeType', 'rotten %s' % (rule.get('ruleTimeType'),))
-        self.pathToXML = self.pathInput.text()
-        self.removeAllRules()
-        self.initRules()
-        
-        #print (xml.etree.ElementTree.tostring(tree)) # removed argument: prettyprint
+            #for rule in tree.findall('rule'): # was: tree.xpath('//fruit')
+            #    rule.set('ruleTimeType', 'rotten %s' % (rule.get('ruleTimeType'),))
+            self.pathToXML = self.pathInput.text()
+            self.removeAllRules()
+            self.initRules()
+            
+            #print (xml.etree.ElementTree.tostring(tree)) # removed argument: prettyprint
 
 
 class RuleString(QWidget):
@@ -458,7 +467,7 @@ class RuleString(QWidget):
         self.moveRule = QVBoxLayout()
         self.orderRule = QLabel('#' + str(self.ruleOrder) +' ')
         
-        self.orderRule.setStyleSheet("QLabel {font-size : 40px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
+        self.orderRule.setStyleSheet("QLabel {font-size : 30px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
         #self.orderRule("QLabel {font-size : 400px; color : blue; background-image: url('tmp/test.jpg');}");
         
         self.ruleStartDate.setCalendarPopup(True)
@@ -475,7 +484,7 @@ class RuleString(QWidget):
         self.buttonUp = QPushButton('V')
         self.buttonUp.setToolTip('Up Rule')
         self.buttonUp.clicked.connect(self.upRule)
-        self.buttonRemove = QPushButton('Remove')
+        self.buttonRemove = QPushButton('-')
         self.buttonRemove.setToolTip('Remove Rule')
         self.buttonRemove.clicked.connect(self.removeRule)
         self.buttonDown = QPushButton( '^')
@@ -521,7 +530,9 @@ class RuleString(QWidget):
 
     def removeRule(self):
         '''removeRule(self) - remove rule from rule list'''
-        self.ruleParent.removeOneRule(self.ruleOrder)
+        removecheck = QMessageBox.warning(self, 'Confirm delete rule','Confirm delete rule "#%d"'%self.ruleOrder, QMessageBox.Yes | QMessageBox.No)
+        if removecheck==QMessageBox.Yes:
+            self.ruleParent.removeOneRule(self.ruleOrder)
         #print ('removeRule')
 
     def downRule(self):
