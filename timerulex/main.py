@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.1'''
+__version__ = '''0.6.3'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -232,7 +232,7 @@ class TimeX(QMainWindow):
         self.removeRules()
         
         
-        print ccc
+        #print ccc
         
         
         self.rootXml = xml.etree.ElementTree.fromstring(ccc)
@@ -245,11 +245,39 @@ class TimeX(QMainWindow):
         r2.find('OrderId').text = rrr1
         #self.removeRules()
         self.initRules(treeXml = self.treeXml)
-        print ('rrr1, rrr2-----'+str((rrr1, rrr2)))
+        #print ('rrr1, rrr2-----'+str((rrr1, rrr2)))
 
     def removeRul(self, rrr):
         '''removeRul(self, rrr) - remove id rrr'''
-        print ('rrr-----'+str((rrr)))
+        lll = len(self.ruleList)
+        self.treeXml = self.xmlRules()
+        self.rootXml = self.treeXml.getroot()
+        sss = xml.etree.ElementTree.tostring(self.rootXml)
+        ccc = copy.copy(sss)
+        lll2 = copy.copy(lll)
+        del self.rootXml
+        del self.treeXml
+        del sss
+        self.removeRules()
+        
+        
+        #print ccc
+        
+        
+        self.rootXml = xml.etree.ElementTree.fromstring(ccc)
+        self.treeXml = xml.etree.ElementTree.ElementTree(self.rootXml)
+        
+        
+        r = self.getRuleByOrderId(rrr)
+        self.rootXml.remove(r)
+        
+        
+        for iii in range(rrr+1, lll2):
+            self.getRuleByOrderId(iii).find('OrderId').text = str(iii - 1)
+        
+        #self.removeRules()
+        self.initRules(treeXml = self.treeXml)
+        #print ('rrr-----'+str((rrr)))
 
     def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
@@ -479,7 +507,7 @@ class RuleString(QWidget):
         self.buttonDown.setToolTip('Down Rule')
         self.buttonDown.clicked.connect(self.downRule)
         self.moveRule.addWidget(self.buttonDown)
-        #self.moveRule.addWidget(self.buttonRemove)
+        self.moveRule.addWidget(self.buttonRemove)
         self.moveRule.addWidget(self.buttonUp)
         
         self.ruleLayout.addWidget(self.orderRule)
@@ -518,7 +546,7 @@ class RuleString(QWidget):
 
     def removeRule(self):
         '''removeRule(self) - remove rule from rule list'''
-        self.ruleParent.removeRules(self.ruleOrder)
+        self.ruleParent.removeRul(self.ruleOrder)
         print ('removeRules')
 
     def downRule(self):
