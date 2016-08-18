@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.4.14'''
+__version__ = '''0.5.2'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -222,23 +222,31 @@ class TimeX(QMainWindow):
         for rrr in self.ruleList:
             if not(rrr==None):
                 nnn = rrr.getRule(self.ruleList)
-                tree.append(nnn)
+                if nnn==None:
+                    return None
+                else:
+                    tree.append(nnn)
         return xml.etree.ElementTree.ElementTree(tree)
         
     def printRules(self):
         '''PrintRules(self) - Print Rules'''
         tree = self.xmlRules()
-        print(xml.etree.ElementTree.tostring(tree.getroot(), 'utf8', method="xml"))
+        if tree==None:
+            return
+        else:
+            print(xml.etree.ElementTree.tostring(tree.getroot(), 'utf8', method="xml"))
 
     def saveRules(self):
         '''PrintRules(self) - Print Rules'''
         try:
             tree = self.xmlRules()
-            #print ('tree to write - '+ str(tree))
-            tree.write(self.pathInput.text(), encoding="utf8", 
-            xml_declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', 
-            default_namespace=None, method="xml")
-            
+            if tree==None:
+                return
+            else:
+                #print ('tree to write - '+ str(tree))
+                tree.write(self.pathInput.text(), encoding="utf8", 
+                xml_declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', 
+                default_namespace=None, method="xml")
         except IOError:
             print ("""can't open(self.pathInput.text(), 'w') - """+self.pathInput.text())
             #os.makedirs(self.homePath+os.sep+'.config')
@@ -286,31 +294,22 @@ class RuleString(QWidget):
         
         nnn = QtCore.QDateTime()
         
-        self.orderRule = QLabel('#' + str(self.ruleOrder) +' ')
-        
-        self.orderRule.setStyleSheet("QLabel {font-size : 40px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
-        #self.orderRule("QLabel {font-size : 400px; color : blue; background-image: url('tmp/test.jpg');}");
-        
         self.ruleStartTime = QTimeEdit(nnn.currentDateTime().time())
         
         self.ruleStartTime.setToolTip('ruleStartTime')
         self.ruleStartDate = QDateEdit(nnn.currentDateTime().date())
-        self.ruleStartDate.setCalendarPopup(True)
         self.ruleStartDate.setToolTip('ruleStartDate')
         self.ruleEndTime = QDateTimeEdit(nnn.currentDateTime().time())
         self.ruleEndTime = QTimeEdit(nnn.currentDateTime().time())
         
         self.ruleEndTime.setToolTip('ruleEndTime')
         self.ruleEndDate = QDateEdit(nnn.currentDateTime().date())
-        self.ruleEndDate.setCalendarPopup(True)
         self.ruleEndDate.setToolTip('ruleEndDate')
         self.ruleTimeType = QComboBox()
-        self.ruleTimeType.setEditable(False)
         for tt in self.RULE_TIME_TIPES:
             self.ruleTimeType.addItem(tt)
         self.ruleTimeType.setToolTip('ruleTimeType')
         self.ruleSetType = QComboBox()
-        self.ruleSetType.setEditable(False)
         for st in self.RULE_SET_TIPES:
             self.ruleSetType.addItem(st)
         self.ruleSetType.setToolTip('ruleSetType')
@@ -324,10 +323,6 @@ class RuleString(QWidget):
         
         self.ruleLayout = QHBoxLayout()
         
-        self.orderRule = QLabel('#' + str(self.ruleOrder) +' ')
-        
-        self.orderRule.setStyleSheet("QLabel {font-size : 40px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
-        #self.orderRule("QLabel {font-size : 400px; color : blue; background-image: url('tmp/test.jpg');}");
         
         stimetext = self.ruleElement.find('StartTime').text
         stime = QtCore.QTime(int(stimetext[:2]), int(stimetext[3:5]))
@@ -339,7 +334,6 @@ class RuleString(QWidget):
         sdate = QtCore.QDate(int(sdatetext[:4]), int(sdatetext[5:7]), int(sdatetext[8:]))
         
         self.ruleStartDate = QDateEdit(sdate)
-        self.ruleStartDate.setCalendarPopup(True)
         self.ruleStartDate.setToolTip('ruleStartDate')
         
         etimetext = self.ruleElement.find('EndTime').text
@@ -351,10 +345,8 @@ class RuleString(QWidget):
         edate = QtCore.QDate(int(edatetext[:4]), int(edatetext[5:7]), int(edatetext[8:]))
         
         self.ruleEndDate = QDateEdit(edate)
-        self.ruleEndDate.setCalendarPopup(True)
         self.ruleEndDate.setToolTip('ruleEndDate')
         self.ruleTimeType = QComboBox()
-        self.ruleTimeType.setEditable(False)
         
         TimeTypetext = self.ruleElement.find('TimeType').text
         for tt in self.RULE_TIME_TIPES:
@@ -364,7 +356,6 @@ class RuleString(QWidget):
         
         self.ruleTimeType.setToolTip('ruleTimeType')
         self.ruleSetType = QComboBox()
-        self.ruleSetType.setEditable(False)
         for st in self.RULE_SET_TIPES:
             self.ruleSetType.addItem(st)
         SetTypetext = self.ruleElement.find('SetType').text
@@ -382,6 +373,18 @@ class RuleString(QWidget):
         
     def endInit(self):
         '''endInit(self) - end init'''
+        
+        self.orderRule = QLabel('#' + str(self.ruleOrder) +' ')
+        
+        self.orderRule.setStyleSheet("QLabel {font-size : 40px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
+        #self.orderRule("QLabel {font-size : 400px; color : blue; background-image: url('tmp/test.jpg');}");
+        
+        self.ruleStartDate.setCalendarPopup(True)
+        self.ruleEndDate.setCalendarPopup(True)
+        self.ruleStartTime.setDisplayFormat("HH:mm:ss")
+        self.ruleEndTime.setDisplayFormat("HH:mm:ss")
+        self.ruleTimeType.setEditable(False)
+        self.ruleSetType.setEditable(False)
         
         self.priceStart = QLabel('Start: ')
         self.priceEnd = QLabel('End: ')
@@ -410,7 +413,6 @@ class RuleString(QWidget):
 
     def getRule(self, RulesList):
         '''PrintRule(self) - Print Rule'''
-
         root = xml.etree.ElementTree.Element("rule")
 
         orderid = xml.etree.ElementTree.SubElement(root, "OrderId")
@@ -435,9 +437,15 @@ class RuleString(QWidget):
 
         settype = xml.etree.ElementTree.SubElement(root, "SetType")
         settype.text = self.ruleSetType.currentText()
-
+        
+        ruleprice = self.rulePrice.text()
+        try:
+            int(ruleprice)
+        except ValueError:
+            QMessageBox.warning(self, 'Error','Input price can only be a int, but not => "%s"'%ruleprice)
+            return None
         price = xml.etree.ElementTree.SubElement(root, "Price")
-        price.text = self.rulePrice.text()
+        price.text = ruleprice
 
         return root
 
@@ -468,7 +476,7 @@ def main(argsval):
     elif argsval[1]=='-v':
         print (VERSION_INFO % __version__)
         sys.exit()
-    elif os.path.isfile(argsval[1]) and argsval[1][:-4]=='.xml':
+    elif os.path.isfile(argsval[1]):
         pathToXML = argsval[1]
         
 
