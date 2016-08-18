@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.3'''
+__version__ = '''0.6.6'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -100,7 +100,7 @@ class TimeX(QMainWindow):
         pathLayout = QHBoxLayout()
         self.pathLabel = QLabel("Path Rule: ")
         self.pathInput = QLineEdit(self.pathToXML)
-        self.buttonPath = QPushButton(getIcon('document-open'), "Select Rule")
+        self.buttonPath = QPushButton(getIcon('system-lock-screen'), "Select Rule")
         self.buttonPath.setToolTip('Select rule file')
         self.buttonPath.clicked.connect(self.selectFileRule)
         self.butAddRule = QPushButton(getIcon('folder-remote'), "Add Rule")
@@ -119,7 +119,7 @@ class TimeX(QMainWindow):
         self.buttonSave = QPushButton(getIcon('document-save'), "Save")
         self.buttonSave.setToolTip('Save all')
         self.buttonSave.clicked.connect(self.saveRules)
-        self.buttonOpen = QPushButton("Open")
+        self.buttonOpen = QPushButton(getIcon('document-open'), "Open")
         self.buttonOpen.setToolTip('Open xml')
         self.buttonOpen.clicked.connect(self.openXML)
         self.buttonExit = QPushButton(getIcon('system-log-out'), "Exit")
@@ -164,9 +164,6 @@ class TimeX(QMainWindow):
         if treeXml == None:
             self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
             self.rootXml = self.treeXml.getroot()
-            #for ruleelement in self.rootXml.iter('rule'):
-                #print (str(ruleelement))
-                #self.addRule(ruleElement = ruleelement)
             self.addOrderedRules()
             
         else:
@@ -175,7 +172,8 @@ class TimeX(QMainWindow):
                     self.rootXml = self.treeXml.getroot()
                     self.addOrderedRules()
                 except:
-                    print('can not parse - ' + str(self.rootXml))
+                    print('Can not parse - ' + str(self.rootXml))
+                    QMessageBox.warning(self, 'Error parse XML file','Can not parse "%s"'%ruleprice)
                     self.addRule()
             
 
@@ -194,7 +192,6 @@ class TimeX(QMainWindow):
         '''addOrderedRules(self) - add ordered rules'''
         ruleIter = (self.rootXml.iter('rule'))
         lenRules = sum(1 for _ in ruleIter)
-        #print('lenRules------'+str(lenRules))
         for iii in range(lenRules):
             ruleElement = self.getRuleByOrderId(iii)
             if not(ruleElement==None):
@@ -210,18 +207,17 @@ class TimeX(QMainWindow):
     def getRuleOrder(self, ruleElement):
         '''getRuleOrder(ruleElement) - get rule OrderId'''
         orderId = ruleElement.find('OrderId').text
-        #print ('OrderId------'+orderId)
         return int(orderId)
 
-    def removeRules(self):
-        '''removeRules(self) - remove all rules'''
+    def removeAllRules(self):
+        '''removeAllRules(self) - remove all rules'''
         self.ruleList = []
         self.ruleScroll.setParent(None)
         #self.commonLayout.removeAt(self.ruleScroll)
         del self.ruleScroll
 
-    def swichRules(self, rrr1, rrr2):
-        '''swichRules(self, rrr1, rrr2) - swich rules id rrr1 and rrr2'''
+    def remasterXml(self):
+        '''remasterXml(self) - remaster rule xml'''
         self.treeXml = self.xmlRules()
         self.rootXml = self.treeXml.getroot()
         sss = xml.etree.ElementTree.tostring(self.rootXml)
@@ -229,44 +225,26 @@ class TimeX(QMainWindow):
         del self.rootXml
         del self.treeXml
         del sss
-        self.removeRules()
-        
-        
-        #print ccc
-        
-        
+        self.removeAllRules()
         self.rootXml = xml.etree.ElementTree.fromstring(ccc)
         self.treeXml = xml.etree.ElementTree.ElementTree(self.rootXml)
         
+
+    def swichRules(self, rrr1, rrr2):
+        '''swichRules(self, rrr1, rrr2) - swich rules id rrr1 and rrr2'''
         
+        self.remasterXml()
         r1 = self.getRuleByOrderId(rrr1)
         r2 = self.getRuleByOrderId(rrr2)
         r1.find('OrderId').text = rrr2
         r2.find('OrderId').text = rrr1
-        #self.removeRules()
         self.initRules(treeXml = self.treeXml)
-        #print ('rrr1, rrr2-----'+str((rrr1, rrr2)))
 
-    def removeRul(self, rrr):
-        '''removeRul(self, rrr) - remove id rrr'''
+    def removeOneRule(self, rrr):
+        '''removeOneRule(self, rrr) - remove rule by id rrr'''
         lll = len(self.ruleList)
-        self.treeXml = self.xmlRules()
-        self.rootXml = self.treeXml.getroot()
-        sss = xml.etree.ElementTree.tostring(self.rootXml)
-        ccc = copy.copy(sss)
         lll2 = copy.copy(lll)
-        del self.rootXml
-        del self.treeXml
-        del sss
-        self.removeRules()
-        
-        
-        #print ccc
-        
-        
-        self.rootXml = xml.etree.ElementTree.fromstring(ccc)
-        self.treeXml = xml.etree.ElementTree.ElementTree(self.rootXml)
-        
+        self.remasterXml()
         
         r = self.getRuleByOrderId(rrr)
         self.rootXml.remove(r)
@@ -275,19 +253,14 @@ class TimeX(QMainWindow):
         for iii in range(rrr+1, lll2):
             self.getRuleByOrderId(iii).find('OrderId').text = str(iii - 1)
         
-        #self.removeRules()
         self.initRules(treeXml = self.treeXml)
-        #print ('rrr-----'+str((rrr)))
 
     def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
         newrule = RuleString(self, len(self.ruleList), ruleElement)
         self.ruleList.append(newrule)
-        
-        #self.ruleList.insert(self, len(self.ruleList), RuleString(len(self.ruleList)))
         self.ruleLayot.insertWidget(len(self.ruleList), self.ruleList[rulePos])
         self.ruleScroll.update()
-        #RuleString(self, len(self.ruleList).show()
 
     def selectFileRule(self):
         '''selectFileRule(self) - select path to rule'''
@@ -355,8 +328,9 @@ class TimeX(QMainWindow):
                 xml_declaration='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>', 
                 default_namespace=None, method="xml")
         except IOError:
-            print ("""can't open(self.pathInput.text(), 'w') - """+self.pathInput.text())
-            #os.makedirs(self.homePath+os.sep+'.config')
+            print ("""Can't open(self.pathInput.text(), 'w') - """+self.pathInput.text())
+            QMessageBox.warning(self, 'Error open file','Can not open "%s"'%self.pathInput.text())
+                    #os.makedirs(self.homePath+os.sep+'.config')
             #self.conf = open(self.confPath, 'w+')
 #        finally:
 
@@ -369,6 +343,7 @@ class TimeX(QMainWindow):
             self.conf.close()
         except IOError:
             print ("""open(self.pathInput.text(), 'r') - """+self.pathInput.text())
+            QMessageBox.warning(self, 'Error open xml','Can not open xml "%s"'%self.pathInput.text())
             return
 
         tree = xml.etree.ElementTree.fromstring(xmltext)
@@ -376,10 +351,10 @@ class TimeX(QMainWindow):
         #for rule in tree.findall('rule'): # was: tree.xpath('//fruit')
         #    rule.set('ruleTimeType', 'rotten %s' % (rule.get('ruleTimeType'),))
         self.pathToXML = self.pathInput.text()
-        self.removeRules()
+        self.removeAllRules()
         self.initRules()
         
-        print (xml.etree.ElementTree.tostring(tree)) # removed argument: prettyprint
+        #print (xml.etree.ElementTree.tostring(tree)) # removed argument: prettyprint
 
 
 class RuleString(QWidget):
@@ -503,7 +478,7 @@ class RuleString(QWidget):
         self.buttonRemove = QPushButton('Remove')
         self.buttonRemove.setToolTip('Remove Rule')
         self.buttonRemove.clicked.connect(self.removeRule)
-        self.buttonDown = QPushButton('A')
+        self.buttonDown = QPushButton( '^')
         self.buttonDown.setToolTip('Down Rule')
         self.buttonDown.clicked.connect(self.downRule)
         self.moveRule.addWidget(self.buttonDown)
@@ -542,18 +517,18 @@ class RuleString(QWidget):
         '''upRule(self) - move rule up'''
         if self.ruleOrder<len(self.ruleParent.ruleList)-1:
             self.ruleParent.swichRules(self.ruleOrder, self.ruleOrder+1)
-            print ('upRule')
+            #print ('upRule')
 
     def removeRule(self):
         '''removeRule(self) - remove rule from rule list'''
-        self.ruleParent.removeRul(self.ruleOrder)
-        print ('removeRules')
+        self.ruleParent.removeOneRule(self.ruleOrder)
+        #print ('removeRule')
 
     def downRule(self):
         '''downRule(self) - move rule down'''
         if self.ruleOrder>0:
             self.ruleParent.swichRules(self.ruleOrder, self.ruleOrder-1)
-            print ('downRule')
+            #print ('downRule')
 
     def PrintRule(self, RulesList):
         '''PrintRule(self) - Print Rule'''
