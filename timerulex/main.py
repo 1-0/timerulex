@@ -9,6 +9,7 @@ import re
 import socket
 import imp
 import ast
+import copy
 
 from multiprocessing import Process
 
@@ -21,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.5.10'''
+__version__ = '''0.6.1'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -167,14 +168,15 @@ class TimeX(QMainWindow):
                 #print (str(ruleelement))
                 #self.addRule(ruleElement = ruleelement)
             self.addOrderedRules()
-                
-        #~ if self.treeXml:
-            #~ try:
-                #~ self.rootXml = self.treeXml.getroot()
-                #~ self.addOrderedRules()
-            #~ except:
-                #~ print('can not parse - ' + str(self.rootXml))
-                #~ self.addRule()
+            
+        else:
+            if self.treeXml:
+                try:
+                    self.rootXml = self.treeXml.getroot()
+                    self.addOrderedRules()
+                except:
+                    print('can not parse - ' + str(self.rootXml))
+                    self.addRule()
             
 
         self.rulesW.setLayout(self.ruleLayot)
@@ -220,10 +222,33 @@ class TimeX(QMainWindow):
 
     def swichRules(self, rrr1, rrr2):
         '''swichRules(self, rrr1, rrr2) - swich rules id rrr1 and rrr2'''
+        self.treeXml = self.xmlRules()
+        self.rootXml = self.treeXml.getroot()
+        sss = xml.etree.ElementTree.tostring(self.rootXml)
+        ccc = copy.deepcopy(sss)
+        del self.rootXml
+        del self.treeXml
+        del sss
+        self.removeRules()
+        
+        
+        print ccc
+        
+        
+        self.rootXml = xml.etree.ElementTree.fromstring(ccc)
+        self.treeXml = xml.etree.ElementTree.ElementTree(self.rootXml)
+        
+        
+        r1 = self.getRuleByOrderId(rrr1)
+        r2 = self.getRuleByOrderId(rrr2)
+        r1.find('OrderId').text = rrr2
+        r2.find('OrderId').text = rrr1
+        #self.removeRules()
+        self.initRules(treeXml = self.treeXml)
         print ('rrr1, rrr2-----'+str((rrr1, rrr2)))
 
-    def removeRules(self, rrr):
-        '''removeRules(self, rrr) - remove id rrr'''
+    def removeRul(self, rrr):
+        '''removeRul(self, rrr) - remove id rrr'''
         print ('rrr-----'+str((rrr)))
 
     def addRule(self, rulePos=-1, ruleElement=None):
@@ -444,18 +469,18 @@ class RuleString(QWidget):
         self.priceEnd = QLabel('End: ')
         self.priceLabel = QLabel('Price: ')
         
-        self.buttonUp = QPushButton('Up')
+        self.buttonUp = QPushButton('V')
         self.buttonUp.setToolTip('Up Rule')
         self.buttonUp.clicked.connect(self.upRule)
         self.buttonRemove = QPushButton('Remove')
         self.buttonRemove.setToolTip('Remove Rule')
         self.buttonRemove.clicked.connect(self.removeRule)
-        self.buttonDown = QPushButton('Down')
+        self.buttonDown = QPushButton('A')
         self.buttonDown.setToolTip('Down Rule')
         self.buttonDown.clicked.connect(self.downRule)
-        self.moveRule.addWidget(self.buttonUp)
-        self.moveRule.addWidget(self.buttonRemove)
         self.moveRule.addWidget(self.buttonDown)
+        #self.moveRule.addWidget(self.buttonRemove)
+        self.moveRule.addWidget(self.buttonUp)
         
         self.ruleLayout.addWidget(self.orderRule)
         
