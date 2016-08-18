@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.5.4'''
+__version__ = '''0.5.6'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -43,6 +43,9 @@ TANGO_ICONS = {
 'process-stop': """/* XPM */ static char * process_stop_xpm[] = { "32 32 369 2", "  \tc None", ". \tc #AF3333", "+ \tc #C34848", "@ \tc #C34747", "# \tc #C34646", "$ \tc #C34444", "% \tc #C34343", "& \tc #B63636", "* \tc #900202", "= \tc #C24747", "- \tc #EC7474", "; \tc #E15757", "> \tc #E15656", ", \tc #E15454", "\' \tc #E15353", ") \tc #E05151", "! \tc #E05050", "~ \tc #E76262", "{ \tc #CE4F4F", "] \tc #910404", "^ \tc #C64E4E", "/ \tc #EB7171", "( \tc #D94242", "_ \tc #D94343", ": \tc #D94141", "< \tc #D94040", "[ \tc #D93F3F", "} \tc #D83E3E", "| \tc #D83D3D", "1 \tc #D83C3C", "2 \tc #D83B3B", "3 \tc #E45B5B", "4 \tc #D25252", "5 \tc #8F0404", "6 \tc #C74F4F", "7 \tc #EA7171", "8 \tc #DA4444", "9 \tc #E55A5A", "0 \tc #CE4E4E", "a \tc #C84F4F", "b \tc #EA7272", "c \tc #DA4545", "d \tc #DA4646", "e \tc #D83A3A", "f \tc #E45959", "g \tc #CD4848", "h \tc #CB5353", "i \tc #DA4747", "j \tc #D73A3A", "k \tc #D63939", "l \tc #C84545", "m \tc #CC5656", "n \tc #DA4848", "o \tc #DC4646", "p \tc #E03F3F", "q \tc #D93C3C", "r \tc #DE3434", "s \tc #D73C3C", "t \tc #D63A3A", "u \tc #D53939", "v \tc #D43838", "w \tc #E35858", "x \tc #C84343", "y \tc #CE5656", "z \tc #EA6E6E", "A \tc #DB4545", "B \tc #F42727", "C \tc #F52F2F", "D \tc #E23A3A", "E \tc #DA3E3E", "F \tc #F22424", "G \tc #E03030", "H \tc #D53A3A", "I \tc #D43939", "J \tc #D33838", "K \tc #D23737", "L \tc #E15555", "M \tc #C63E3E", "N \tc #CC5757", "O \tc #E96B6B", "P \tc #DC4242", "Q \tc #E2B2B2", "R \tc #DED8D8", "S \tc #F33C3C", "T \tc #E33838", "U \tc #DB3D3D", "V \tc #F42424", "W \tc #E4AFAF", "X \tc #DDD8D8", "Y \tc #F24141", "Z \tc #E03131", "` \tc #D03535", " .\tc #E05353", "..\tc #C13B3B", "+.\tc #960D0D", "@.\tc #EF7D7D", "#.\tc #F42626", "$.\tc #E4ACAC", "%.\tc #DEDEDE", "&.\tc #DFDFDF", "*.\tc #E1D7D7", "=.\tc #F53939", "-.\tc #E23838", ";.\tc #DA3F3F", ">.\tc #F32C2C", ",.\tc #E7ABAB", "\'.\tc #E0E0E0", ").\tc #DED6D6", "!.\tc #F44242", "~.\tc #DB3434", "{.\tc #D23838", "].\tc #D03636", "^.\tc #CF3535", "/.\tc #CE3434", "(.\tc #E65D5D", "_.\tc #940A0A", ":.\tc #ED7777", "<.\tc #EC2E2E", "[.\tc #EC7575", "}.\tc #E2E2E2", "|.\tc #E4DBDB", "1.\tc #F54545", "2.\tc #E13A3A", "3.\tc #DA4040", "4.\tc #F43535", "5.\tc #E9B1B1", "6.\tc #E3E3E3", "7.\tc #E1E1E1", "8.\tc #E4C2C2", "9.\tc #F43838", "0.\tc #D63737", "a.\tc #D13737", "b.\tc #E45757", "c.\tc #ED7676", "d.\tc #EC3434", "e.\tc #EF7C7C", "f.\tc #E4E4E4", "g.\tc #E5E5E5", "h.\tc #E6E6E6", "i.\tc #E7DFDF", "j.\tc #F64F4F", "k.\tc #F63939", "l.\tc #EBB7B7", "m.\tc #E7C5C5", "n.\tc #F44040", "o.\tc #D63838", "p.\tc #D13838", "q.\tc #D03737", "r.\tc #CD3333", "s.\tc #E35656", "t.\tc #930A0A", "u.\tc #ED7575", "v.\tc #EC3C3C", "w.\tc #F08383", "x.\tc #E7E7E7", "y.\tc #E8E8E8", "z.\tc #E9E9E9", "A.\tc #EAE2E2", "B.\tc #EDCBCB", "C.\tc #EBCACA", "D.\tc #F44949", "E.\tc #CF3636", "F.\tc #CE3535", "G.\tc #CC3434", "H.\tc #CB3232", "I.\tc #E25555", "J.\tc #EB4343", "K.\tc #F38484", "L.\tc #EBEBEB", "M.\tc #ECECEC", "N.\tc #EECACA", "O.\tc #F45151", "P.\tc #CD3535", "Q.\tc #CB3333", "R.\tc #CA3232", "S.\tc #E25353", "T.\tc #ED4A4A", "U.\tc #F39D9D", "V.\tc #EEEEEE", "W.\tc #EFDBDB", "X.\tc #F65A5A", "Y.\tc #CF3434", "Z.\tc #CB2828", "`.\tc #C81F1F", " +\tc #C51818", ".+\tc #C31515", "++\tc #C21212", "@+\tc #C01010", "#+\tc #DC3636", "$+\tc #900404", "%+\tc #950B0B", "&+\tc #EC7373", "*+\tc #D73939", "=+\tc #F45757", "-+\tc #F2C4C4", ";+\tc #F0F0F0", ">+\tc #F1F1F1", ",+\tc #F1EAEA", "\'+\tc #F77272", ")+\tc #D72C2C", "!+\tc #C50B0B", "~+\tc #C10101", "{+\tc #C00000", "]+\tc #BF0000", "^+\tc #BE0000", "/+\tc #BD0000", "(+\tc #BC0000", "_+\tc #BB0000", ":+\tc #D92828", "<+\tc #8E0000", "[+\tc #EC7171", "}+\tc #D73838", "|+\tc #DA3C3C", "1+\tc #F55D5D", "2+\tc #F2CECE", "3+\tc #F2F2F2", "4+\tc #F3F3F3", "5+\tc #F4F4F4", "6+\tc #F1EDED", "7+\tc #F47878", "8+\tc #D21D1D", "9+\tc #BA0000", "0+\tc #D92727", "a+\tc #EC7070", "b+\tc #D73636", "c+\tc #D73737", "d+\tc #F46262", "e+\tc #F3CACA", "f+\tc #F5F5F5", "g+\tc #F7E0E0", "h+\tc #F7B5B5", "i+\tc #F6F6F6", "j+\tc #F2ECEC", "k+\tc #F57C7C", "l+\tc #CE1B1B", "m+\tc #B90000", "n+\tc #D82626", "o+\tc #EC6D6D", "p+\tc #D73535", "q+\tc #D83939", "r+\tc #F46A6A", "s+\tc #F8E1E1", "t+\tc #F46B6B", "u+\tc #E64949", "v+\tc #F7AAAA", "w+\tc #F1ECEC", "x+\tc #F48787", "y+\tc #CC1F1F", "z+\tc #B80000", "A+\tc #D82424", "B+\tc #EC6B6B", "C+\tc #D63434", "D+\tc #F46F6F", "E+\tc #F0CDCD", "F+\tc #F8E3E3", "G+\tc #F47575", "H+\tc #C90A0A", "I+\tc #C30000", "J+\tc #E34E4E", "K+\tc #F8B3B3", "L+\tc #EFEBEB", "M+\tc #F48E8E", "N+\tc #C71919", "O+\tc #B70000", "P+\tc #D72323", "Q+\tc #8C0000", "R+\tc #940606", "S+\tc #E66969", "T+\tc #DD4444", "U+\tc #D63333", "V+\tc #EC6666", "W+\tc #F4B3B3", "X+\tc #F6E3E3", "Y+\tc #F47A7A", "Z+\tc #C90B0B", "`+\tc #C20000", " @\tc #C10000", ".@\tc #F6B4B4", "+@\tc #F1E2E2", "@@\tc #F28888", "#@\tc #BF0C0C", "$@\tc #B70101", "%@\tc #DA2727", "&@\tc #950C0C", "*@\tc #E36363", "=@\tc #DF4646", "-@\tc #D63131", ";@\tc #D63232", ">@\tc #D52F2F", ",@\tc #D12121", "\'@\tc #E65A5A", ")@\tc #F5B3B3", "!@\tc #F5DFDF", "~@\tc #F38080", "{@\tc #C70909", "]@\tc #DE5454", "^@\tc #F5B8B8", "/@\tc #F3E3E3", "(@\tc #F28C8C", "_@\tc #BE0A0A", ":@\tc #D62323", "<@\tc #AB0F0F", "[@\tc #960A0A", "}@\tc #DD4B4B", "|@\tc #D92424", "1@\tc #CC0606", "2@\tc #C90000", "3@\tc #C80000", "4@\tc #C70000", "5@\tc #E76363", "6@\tc #F58B8B", "7@\tc #C80C0C", "8@\tc #E05C5C", "9@\tc #F59090", "0@\tc #C00E0E", "a@\tc #B80202", "b@\tc #D52323", "c@\tc #A60D0D", "d@\tc #920303", "e@\tc #D41818", "f@\tc #C60000", "g@\tc #C50000", "h@\tc #C50202", "i@\tc #BB0202", "j@\tc #B70303", "k@\tc #D62424", "l@\tc #910303", "m@\tc #D21717", "n@\tc #C40000", "o@\tc #B60000", "p@\tc #D52424", "q@\tc #A00B0B", "r@\tc #D11616", "s@\tc #B80303", "t@\tc #9F0A0A", "u@\tc #860101", "v@\tc #D53434", "w@\tc #CF1818", "x@\tc #B90404", "y@\tc #9A0909", "z@\tc #830303", "A@\tc #D33333", "B@\tc #CD1515", "C@\tc #C20505", "D@\tc #C10505", "E@\tc #C00505", "F@\tc #BF0404", "G@\tc #BE0404", "H@\tc #BC0404", "I@\tc #BB0404", "J@\tc #BA0404", "K@\tc #BB0606", "L@\tc #D42525", "M@\tc #950909", "N@\tc #810101", "O@\tc #C52828", "P@\tc #CE2C2C", "Q@\tc #CC2B2B", "R@\tc #CB2929", "S@\tc #CA2626", "T@\tc #CA2525", "U@\tc #CA2323", "V@\tc #C82222", "W@\tc #C92222", "X@\tc #C72121", "Y@\tc #920808", "Z@\tc #470000", "`@\tc #460000", " #\tc #480000", "                    . + + + @ @ @ # $ $ % & *                   ", "                  = - ; ; > > > > , \' ) ! ~ { ]                 ", "                ^ / ( _ ( ( : : < [ } | 1 2 3 4 5               ", "              6 7 8 8 8 8 _ _ ( : < [ } | 1 2 9 0               ", "            a b c c d d c c 8 _ ( : < [ } 1 2 e f g             ", "          h b c d i i i i d c 8 _ ( < [ } | 1 j k f l           ", "        m 7 8 c i n o p n i d 8 _ ( : [ q r s t u v w x         ", "      y z _ 8 c i A B C D i d c _ ( : E F C G H I J K L M       ", "    N O : _ 8 c P B Q R S T c 8 _ ( U V W X Y Z I J K `  ...    ", "  +.@.< : ( _ 8 #.$.%.&.*.=.-._ ( ;.>.,.\'.&.).!.~.{.].^./.(._.  ", "  +.:.[ < : ( _ <.[.\'.}.}.|.1.2.3.4.5.6.}.7.8.9.0.a.].^./.b._.  ", "  +.c.} [ < : : ( d.e.f.g.h.i.j.k.l.h.g.f.m.n.o.p.q.^./.r.s.t.  ", "  +.u.| } [ [ < : : v.w.x.y.z.A.B.z.z.y.C.D.k p.q.E.F.G.H.I.t.  ", "  +.u.1 | | } [ [ [ [ J.K.L.L.M.M.M.L.N.O.H p.q.E.P.G.Q.R.S.t.  ", "  +.- 2 2 1 | | | } } } T.U.V.V.V.V.W.X.H p.Y.Z.`. +.+++@+#+$+  ", "  %+&+*+e 2 2 2 1 1 1 q =+-+;+>+>+>+,+\'+)+!+~+{+]+^+/+(+_+:+<+  ", "  %+[+}+}+*+e e e e |+1+2+3+4+5+5+4+3+6+7+8+{+]+^+/+(+_+9+0+<+  ", "  %+a+b+c+}+}+}+*+e d+e+3+5+f+g+h+i+5+4+j+k+l+^+/+(+_+9+m+n+<+  ", "  %+o+p+b+b+b+c+q+r+2+>+5+i+s+t+u+v+i+5+3+w+x+y+(+_+9+m+z+A+<+  ", "  _.B+C+C+C+p+p+D+E+;+3+f+F+G+H+I+J+K+i+4+>+L+M+N+9+m+z+O+P+Q+  ", "  R+S+T+U+U+U+C+V+W+;+4+X+Y+Z+I+`+ @S..@5+>++@@@#@m+z+O+$@%@Q+  ", "    &@*@=@-@;@>@,@\'@)@!@~@{@I+`+ @{+]+]@^@/@(@_@m+z+O+$@:@<@    ", "      [@}@|@1@2@3@4@5@6@7@I+`+ @{+]+^+/+8@9@0@m+z+O+a@b@c@      ", "        d@E e@3@4@f@g@h@I+`+ @{+]+^+/+(+_+i@m+z+O+j@k@c@        ", "          l@2 m@f@g@n@I+`+ @{+]+^+/+(+_+9+m+z+o@j@p@q@          ", "            l@}+r@n@I+`+ @{+]+^+/+(+_+9+m+O+o@s@p@t@            ", "              u@v@w@`+ @{+]+^+/+(+_+9+z+O+o@x@p@y@              ", "                z@A@B@C@C@D@E@F@G@H@I@J@x@K@L@M@                ", "                  N@O@P@Q@R@Z.S@S@T@U@V@W@X@Y@                  ", "                            Z@Z@`@Z@ #                          ", "                                                                ", "                                                                "}; """,
 }
 
+RULE_TIME_TIPES = ['Minute', 'Hour', 'Day', 'Week', 'Month', 'Year']
+RULE_SET_TIPES = ['Time-based', 'Discount', 'Subscription']
+        
 
 COLORS_NAME = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenrod", "DarkGray", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "Goldenrod", "Gray", "Green", "GreenYellow", "Honeydew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenrodYellow", "LightGreen", "LightGrey", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquamarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenrod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "Seashell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen",]
 
@@ -125,8 +128,10 @@ class TimeX(QMainWindow):
         window.setLayout(self.commonLayout)
         
 # +++ add rules strings
+        self.layoutForRules =  QVBoxLayout()
         self.initRules()
 # --- add rules strings
+        self.commonLayout.addLayout(self.layoutForRules)
         
         self.actLayout.addWidget(self.buttonPrint)
         self.actLayout.addWidget(self.buttonSave)
@@ -134,6 +139,7 @@ class TimeX(QMainWindow):
         self.actLayout.addWidget(self.buttonExit)
         
         self.commonLayout.addLayout(self.actLayout)
+        
         self.setCentralWidget(window)
         self.show()
 
@@ -175,8 +181,15 @@ class TimeX(QMainWindow):
         self.ruleScroll.setFrameStyle(QFrame.NoFrame)
         self.ruleScroll.setFrameShadow(QFrame.Plain)
         
-        self.commonLayout.addWidget(self.ruleScroll)
+        self.layoutForRules.addWidget(self.ruleScroll)
         #self.actLayout.addWidget(self.ruleScroll)
+
+    def removeRules(self):
+        '''removeRules(self) - remove all rules'''
+        self.ruleList = []
+        self.ruleScroll.setParent(None)
+        #self.commonLayout.removeAt(self.ruleScroll)
+        del self.ruleScroll
 
     def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
@@ -274,7 +287,10 @@ class TimeX(QMainWindow):
 
         #for rule in tree.findall('rule'): # was: tree.xpath('//fruit')
         #    rule.set('ruleTimeType', 'rotten %s' % (rule.get('ruleTimeType'),))
-
+        self.pathToXML = self.pathInput.text()
+        self.removeRules()
+        self.initRules()
+        
         print (xml.etree.ElementTree.tostring(tree)) # removed argument: prettyprint
 
 
@@ -283,10 +299,14 @@ class RuleString(QWidget):
     def __init__(self, ruleOrder, ruleElement = None):
         super(RuleString, self).__init__()
         self.ruleOrder = ruleOrder
-        self.RULE_TIME_TIPES = ['Minute', 'Hour', 'Day', 'Week', 'Month', 'Year']
-        self.RULE_SET_TIPES = ['Time-based', 'Discount', 'Subscription']
         
         self.ruleLayout = QHBoxLayout()
+        self.ruleTimeType = QComboBox()
+        for tt in RULE_TIME_TIPES:
+            self.ruleTimeType.addItem(tt)
+        self.ruleSetType = QComboBox()
+        for st in RULE_SET_TIPES:
+            self.ruleSetType.addItem(st)
         
         if not (ruleElement == None):
             self.ruleElement = ruleElement
@@ -311,13 +331,7 @@ class RuleString(QWidget):
         self.ruleEndTime.setToolTip('ruleEndTime')
         self.ruleEndDate = QDateEdit(nnn.currentDateTime().date())
         self.ruleEndDate.setToolTip('ruleEndDate')
-        self.ruleTimeType = QComboBox()
-        for tt in self.RULE_TIME_TIPES:
-            self.ruleTimeType.addItem(tt)
         self.ruleTimeType.setToolTip('ruleTimeType')
-        self.ruleSetType = QComboBox()
-        for st in self.RULE_SET_TIPES:
-            self.ruleSetType.addItem(st)
         self.ruleSetType.setToolTip('ruleSetType')
         self.rulePrice = QLineEdit('1')
         self.rulePrice.setToolTip('rulePrice')
@@ -349,20 +363,17 @@ class RuleString(QWidget):
         
         self.ruleEndDate = QDateEdit(edate)
         self.ruleEndDate.setToolTip('ruleEndDate')
-        self.ruleTimeType = QComboBox()
         
         TimeTypetext = self.ruleElement.find('TimeType').text
-        for tt in self.RULE_TIME_TIPES:
-            self.ruleTimeType.addItem(tt)
-        numbtt = self.RULE_TIME_TIPES.index(TimeTypetext)
+        numbtt = RULE_TIME_TIPES.index(TimeTypetext)
         self.ruleTimeType.setCurrentIndex(numbtt)
         
         self.ruleTimeType.setToolTip('ruleTimeType')
         self.ruleSetType = QComboBox()
-        for st in self.RULE_SET_TIPES:
+        for st in RULE_SET_TIPES:
             self.ruleSetType.addItem(st)
         SetTypetext = self.ruleElement.find('SetType').text
-        numbst = self.RULE_SET_TIPES.index(SetTypetext)
+        numbst = RULE_SET_TIPES.index(SetTypetext)
         self.ruleSetType.setCurrentIndex(numbst)
         
         self.ruleSetType.setToolTip('ruleSetType')
