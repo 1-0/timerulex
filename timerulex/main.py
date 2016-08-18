@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.5.2'''
+__version__ = '''0.5.4'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -98,7 +98,7 @@ class TimeX(QMainWindow):
         self.pathInput = QLineEdit(self.pathToXML)
         self.buttonPath = QPushButton(getIcon('document-open'), "Select Rule")
         self.buttonPath.setToolTip('Select rule file')
-        self.buttonPath.clicked.connect(self.openFileRule)
+        self.buttonPath.clicked.connect(self.selectFileRule)
         self.butAddRule = QPushButton(getIcon('folder-remote'), "Add Rule")
         self.butAddRule.setToolTip('Add rule')
         self.butAddRule.clicked.connect(self.addRule)
@@ -123,7 +123,24 @@ class TimeX(QMainWindow):
         self.buttonExit.clicked.connect(self.exitClicked)
 
         window.setLayout(self.commonLayout)
+        
 # +++ add rules strings
+        self.initRules()
+# --- add rules strings
+        
+        self.actLayout.addWidget(self.buttonPrint)
+        self.actLayout.addWidget(self.buttonSave)
+        self.actLayout.addWidget(self.buttonOpen)
+        self.actLayout.addWidget(self.buttonExit)
+        
+        self.commonLayout.addLayout(self.actLayout)
+        self.setCentralWidget(window)
+        self.show()
+
+        self.statusBar().showMessage('timerulex ver. ' + __version__)
+
+    def initRules(self):
+        '''initRules(self) - init rules'''
         self.ruleScroll = QScrollArea()
         self.rulesW = QWidget()
         self.ruleLayot = QVBoxLayout()
@@ -160,17 +177,6 @@ class TimeX(QMainWindow):
         
         self.commonLayout.addWidget(self.ruleScroll)
         #self.actLayout.addWidget(self.ruleScroll)
-# --- add rules strings
-        self.actLayout.addWidget(self.buttonPrint)
-        self.actLayout.addWidget(self.buttonSave)
-        self.actLayout.addWidget(self.buttonOpen)
-        self.actLayout.addWidget(self.buttonExit)
-        
-        self.commonLayout.addLayout(self.actLayout)
-        self.setCentralWidget(window)
-        self.show()
-
-        self.statusBar().showMessage('timerulex ver. ' + __version__)
 
     def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
@@ -182,8 +188,8 @@ class TimeX(QMainWindow):
         self.ruleScroll.update()
         #RuleString(len(self.ruleList)).show()
 
-    def openFileRule(self):
-        '''openFileRule(self) - select path to rule'''
+    def selectFileRule(self):
+        '''selectFileRule(self) - select path to rule'''
         ###to see http://www.rkblog.rk.edu.pl/w/p/simple-text-editor-pyqt4/
         if not self.startPath:
             #for windows
@@ -280,6 +286,8 @@ class RuleString(QWidget):
         self.RULE_TIME_TIPES = ['Minute', 'Hour', 'Day', 'Week', 'Month', 'Year']
         self.RULE_SET_TIPES = ['Time-based', 'Discount', 'Subscription']
         
+        self.ruleLayout = QHBoxLayout()
+        
         if not (ruleElement == None):
             self.ruleElement = ruleElement
             self.initRuleXml()
@@ -289,8 +297,6 @@ class RuleString(QWidget):
         
     def initRule(self):
         '''initRule(self) - init rule ui'''
-        
-        self.ruleLayout = QHBoxLayout()
         
         nnn = QtCore.QDateTime()
         
@@ -320,9 +326,6 @@ class RuleString(QWidget):
 
     def initRuleXml(self):
         '''initRule(self) - init rule ui'''
-        
-        self.ruleLayout = QHBoxLayout()
-        
         
         stimetext = self.ruleElement.find('StartTime').text
         stime = QtCore.QTime(int(stimetext[:2]), int(stimetext[3:5]))
@@ -374,6 +377,10 @@ class RuleString(QWidget):
     def endInit(self):
         '''endInit(self) - end init'''
         
+        self.ruleTimes = QVBoxLayout()
+        self.ruleTimesStart = QHBoxLayout()
+        self.ruleTimesEnd = QHBoxLayout()
+        self.moveRule = QVBoxLayout()
         self.orderRule = QLabel('#' + str(self.ruleOrder) +' ')
         
         self.orderRule.setStyleSheet("QLabel {font-size : 40px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
@@ -390,21 +397,58 @@ class RuleString(QWidget):
         self.priceEnd = QLabel('End: ')
         self.priceLabel = QLabel('Price: ')
         
+        self.buttonUp = QPushButton('Up')
+        self.buttonUp.setToolTip('Up Rule')
+        self.buttonUp.clicked.connect(self.upRule)
+        self.buttonRemove = QPushButton('Remove')
+        self.buttonRemove.setToolTip('Remove Rule')
+        self.buttonRemove.clicked.connect(self.removeRule)
+        self.buttonDown = QPushButton('Down')
+        self.buttonDown.setToolTip('Down Rule')
+        self.buttonDown.clicked.connect(self.downRule)
+        self.moveRule.addWidget(self.buttonUp)
+        self.moveRule.addWidget(self.buttonRemove)
+        self.moveRule.addWidget(self.buttonDown)
+        
         self.ruleLayout.addWidget(self.orderRule)
-        self.ruleLayout.addWidget(self.priceStart)
-        self.ruleLayout.addWidget(self.ruleStartTime)
-        self.ruleLayout.addWidget(self.ruleStartDate)
-        self.ruleLayout.addWidget(self.priceEnd)
-        self.ruleLayout.addWidget(self.ruleEndTime)
-        self.ruleLayout.addWidget(self.ruleEndDate)
+        
+        self.ruleTimesStart.addWidget(self.priceStart)
+        self.ruleTimesStart.addWidget(self.ruleStartTime)
+        self.ruleTimesStart.addWidget(self.ruleStartDate)
+        #self.ruleLayout.addWidget(self.priceStart)
+        #self.ruleLayout.addWidget(self.ruleStartTime)
+        #self.ruleLayout.addWidget(self.ruleStartDate)
+        self.ruleTimesEnd.addWidget(self.priceEnd)
+        self.ruleTimesEnd.addWidget(self.ruleEndTime)
+        self.ruleTimesEnd.addWidget(self.ruleEndDate)
+        #self.ruleLayout.addWidget(self.priceEnd)
+        #self.ruleLayout.addWidget(self.ruleEndTime)
+        #self.ruleLayout.addWidget(self.ruleEndDate)
+        
+        self.ruleTimes.addLayout(self.ruleTimesStart)
+        self.ruleTimes.addLayout(self.ruleTimesEnd)
+        self.ruleLayout.addLayout(self.ruleTimes)
+        
         self.ruleLayout.addWidget(self.ruleTimeType)
         self.ruleLayout.addWidget(self.ruleSetType)
         self.ruleLayout.addWidget(self.priceLabel)
         self.ruleLayout.addWidget(self.rulePrice)
+        self.ruleLayout.addLayout(self.moveRule)
         
         self.setLayout(self.ruleLayout)
         
 
+    def upRule(self):
+        '''upRule(self) - move rule up'''
+        print ('upRule')
+
+    def removeRule(self):
+        '''removeRule(self) - remove rule from rule list'''
+        print ('removeRule')
+
+    def downRule(self):
+        '''downRule(self) - move rule down'''
+        print ('downRule')
 
     def PrintRule(self, RulesList):
         '''PrintRule(self) - Print Rule'''
@@ -422,14 +466,12 @@ class RuleString(QWidget):
         starttime.text = self.ruleStartTime.time().toString(QtCore.Qt.ISODate)
 
         startdate = xml.etree.ElementTree.SubElement(root, "StartDate")
-        #startdate.text = self.ruleStartDate.selectedDate().toString(QtCore.Qt.ISODate)
         startdate.text = self.ruleStartDate.date().toString(QtCore.Qt.ISODate)
 
         endtime = xml.etree.ElementTree.SubElement(root, "EndTime")
         endtime.text = self.ruleEndTime.time().toString(QtCore.Qt.ISODate)
 
         enddate = xml.etree.ElementTree.SubElement(root, "EndDate")
-        #enddate.text = self.ruleEndDate.selectedDate().toString(QtCore.Qt.ISODate)
         enddate.text = self.ruleEndDate.date().toString(QtCore.Qt.ISODate)
 
         timetype = xml.etree.ElementTree.SubElement(root, "TimeType")
