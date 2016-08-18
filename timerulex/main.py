@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.8'''
+__version__ = '''0.6.9'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -162,7 +162,7 @@ class TimeX(QMainWindow):
         #~ else:
             #~ self.treeXml = treeXml
             
-        if treeXml == None:
+        if treeXml is None:
             self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
             self.rootXml = self.treeXml.getroot()
             self.addOrderedRules()
@@ -368,11 +368,11 @@ class TimeX(QMainWindow):
 
 class RuleString(QWidget):
     '''RuleString(QHBoxLayout) - rule string class'''
-    def __init__(self, ruleParent, ruleOrder, ruleElement = None):
+    def __init__(self, ruleParent, ruleOrder, ruleElement=None):
         super(RuleString, self).__init__()
         self.ruleParent = ruleParent
         self.ruleOrder = ruleOrder
-        
+
         self.ruleLayout = QHBoxLayout()
         self.ruleTimeType = QComboBox()
         for tt in RULE_TIME_TIPES:
@@ -380,27 +380,27 @@ class RuleString(QWidget):
         self.ruleSetType = QComboBox()
         for st in RULE_SET_TIPES:
             self.ruleSetType.addItem(st)
-        
-        if not (ruleElement == None):
+
+        if not (ruleElement is None):
             self.ruleElement = ruleElement
             self.initRuleXml()
         else:
             self.ruleElement = None
             self.initRule()
-        
+
     def initRule(self):
         '''initRule(self) - init rule ui'''
-        
+
         nnn = QtCore.QDateTime()
-        
+
         self.ruleStartTime = QTimeEdit(nnn.currentDateTime().time())
-        
+
         self.ruleStartTime.setToolTip('ruleStartTime')
         self.ruleStartDate = QDateEdit(nnn.currentDateTime().date())
         self.ruleStartDate.setToolTip('ruleStartDate')
         self.ruleEndTime = QDateTimeEdit(nnn.currentDateTime().time())
         self.ruleEndTime = QTimeEdit(nnn.currentDateTime().time())
-        
+
         self.ruleEndTime.setToolTip('ruleEndTime')
         self.ruleEndDate = QDateEdit(nnn.currentDateTime().date())
         self.ruleEndDate.setToolTip('ruleEndDate')
@@ -408,39 +408,39 @@ class RuleString(QWidget):
         self.ruleSetType.setToolTip('ruleSetType')
         self.rulePrice = QLineEdit('1')
         self.rulePrice.setToolTip('rulePrice')
-        
+
         self.endInit()
 
     def initRuleXml(self):
         '''initRule(self) - init rule ui'''
-        
+
         stimetext = self.ruleElement.find('StartTime').text
         stime = QtCore.QTime(int(stimetext[:2]), int(stimetext[3:5]))
         self.ruleStartTime = QTimeEdit(stime)
-        
+
         self.ruleStartTime.setToolTip('ruleStartTime')
-        
+
         sdatetext = self.ruleElement.find('StartDate').text
         sdate = QtCore.QDate(int(sdatetext[:4]), int(sdatetext[5:7]), int(sdatetext[8:]))
-        
+
         self.ruleStartDate = QDateEdit(sdate)
         self.ruleStartDate.setToolTip('ruleStartDate')
-        
+
         etimetext = self.ruleElement.find('EndTime').text
         self.ruleEndTime = QTimeEdit(QtCore.QTime(int(etimetext[:2]), int(etimetext[3:5])))
-        
+
         self.ruleEndTime.setToolTip('ruleEndTime')
-        
+
         edatetext = self.ruleElement.find('EndDate').text
         edate = QtCore.QDate(int(edatetext[:4]), int(edatetext[5:7]), int(edatetext[8:]))
-        
+
         self.ruleEndDate = QDateEdit(edate)
         self.ruleEndDate.setToolTip('ruleEndDate')
-        
+
         TimeTypetext = self.ruleElement.find('TimeType').text
         numbtt = RULE_TIME_TIPES.index(TimeTypetext)
         self.ruleTimeType.setCurrentIndex(numbtt)
-        
+
         self.ruleTimeType.setToolTip('ruleTimeType')
         self.ruleSetType = QComboBox()
         for st in RULE_SET_TIPES:
@@ -448,103 +448,91 @@ class RuleString(QWidget):
         SetTypetext = self.ruleElement.find('SetType').text
         numbst = RULE_SET_TIPES.index(SetTypetext)
         self.ruleSetType.setCurrentIndex(numbst)
-        
+
         self.ruleSetType.setToolTip('ruleSetType')
-        
+
         pricetext = self.ruleElement.find('Price').text
-        
+
         self.rulePrice = QLineEdit(pricetext)
         self.rulePrice.setToolTip('rulePrice')
-        
+
         self.endInit()
-        
+
     def endInit(self):
         '''endInit(self) - end init'''
-        
+
         self.ruleTimes = QVBoxLayout()
         self.ruleTimesStart = QHBoxLayout()
         self.ruleTimesEnd = QHBoxLayout()
         self.moveRule = QVBoxLayout()
-        self.orderRule = QLabel('#' + str(self.ruleOrder) +' ')
-        
-        self.orderRule.setStyleSheet("QLabel {font-size : 30px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]));
-        #self.orderRule("QLabel {font-size : 400px; color : blue; background-image: url('tmp/test.jpg');}");
-        
+        self.orderRule = QLabel('#' + str(self.ruleOrder) + ' ')
+
+        self.orderRule.setStyleSheet("QLabel {font-size : 30px; color : %s; background-color: %s;}" % (COLORS_NAME[self.ruleOrder], COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]))
+
         self.ruleStartDate.setCalendarPopup(True)
         self.ruleEndDate.setCalendarPopup(True)
         self.ruleStartTime.setDisplayFormat("HH:mm:ss")
         self.ruleEndTime.setDisplayFormat("HH:mm:ss")
         self.ruleTimeType.setEditable(False)
         self.ruleSetType.setEditable(False)
-        
+
         self.priceStart = QLabel('Start: ')
         self.priceEnd = QLabel('End: ')
         self.priceLabel = QLabel('Price: ')
-        
+
         self.buttonUp = QPushButton('V')
         self.buttonUp.setToolTip('Up Rule')
         self.buttonUp.clicked.connect(self.upRule)
         self.buttonRemove = QPushButton('-')
         self.buttonRemove.setToolTip('Remove Rule')
         self.buttonRemove.clicked.connect(self.removeRule)
-        self.buttonDown = QPushButton( '^')
+        self.buttonDown = QPushButton('^')
         self.buttonDown.setToolTip('Down Rule')
         self.buttonDown.clicked.connect(self.downRule)
         self.moveRule.addWidget(self.buttonDown)
         self.moveRule.addWidget(self.buttonRemove)
         self.moveRule.addWidget(self.buttonUp)
-        
+
         self.ruleLayout.addWidget(self.orderRule)
-        
+
         self.ruleTimesStart.addWidget(self.priceStart)
         self.ruleTimesStart.addWidget(self.ruleStartTime)
         self.ruleTimesStart.addWidget(self.ruleStartDate)
-        #self.ruleLayout.addWidget(self.priceStart)
-        #self.ruleLayout.addWidget(self.ruleStartTime)
-        #self.ruleLayout.addWidget(self.ruleStartDate)
         self.ruleTimesEnd.addWidget(self.priceEnd)
         self.ruleTimesEnd.addWidget(self.ruleEndTime)
         self.ruleTimesEnd.addWidget(self.ruleEndDate)
-        #self.ruleLayout.addWidget(self.priceEnd)
-        #self.ruleLayout.addWidget(self.ruleEndTime)
-        #self.ruleLayout.addWidget(self.ruleEndDate)
-        
+
         self.ruleTimes.addLayout(self.ruleTimesStart)
         self.ruleTimes.addLayout(self.ruleTimesEnd)
         self.ruleLayout.addLayout(self.ruleTimes)
-        
+
         self.ruleLayout.addWidget(self.ruleTimeType)
         self.ruleLayout.addWidget(self.ruleSetType)
         self.ruleLayout.addWidget(self.priceLabel)
         self.ruleLayout.addWidget(self.rulePrice)
         self.ruleLayout.addLayout(self.moveRule)
-        
+
         self.setLayout(self.ruleLayout)
-        
 
     def upRule(self):
         '''upRule(self) - move rule up'''
-        if self.ruleOrder<len(self.ruleParent.ruleList)-1:
+        if self.ruleOrder < len(self.ruleParent.ruleList)-1:
             self.ruleParent.swichRules(self.ruleOrder, self.ruleOrder+1)
-            #print ('upRule')
 
     def removeRule(self):
         '''removeRule(self) - remove rule from rule list'''
-        removecheck = QMessageBox.warning(self, 'Confirm delete rule','Confirm delete rule "#%d"'%self.ruleOrder, QMessageBox.Yes | QMessageBox.No)
-        if removecheck==QMessageBox.Yes:
+        removecheck = QMessageBox.warning(self, 'Confirm delete rule', 'Confirm delete rule "#%d"' % self.ruleOrder, QMessageBox.Yes | QMessageBox.No)
+        if removecheck == QMessageBox.Yes:
             self.ruleParent.removeOneRule(self.ruleOrder)
-        #print ('removeRule')
 
     def downRule(self):
         '''downRule(self) - move rule down'''
-        if self.ruleOrder>0:
+        if self.ruleOrder > 0:
             self.ruleParent.swichRules(self.ruleOrder, self.ruleOrder-1)
-            #print ('downRule')
 
     def PrintRule(self, RulesList):
         '''PrintRule(self) - Print Rule'''
         print(self.getRule(RulesList))
-        
 
     def getRule(self, RulesList):
         '''PrintRule(self) - Print Rule'''
@@ -570,12 +558,12 @@ class RuleString(QWidget):
 
         settype = xml.etree.ElementTree.SubElement(root, "SetType")
         settype.text = self.ruleSetType.currentText()
-        
+
         ruleprice = self.rulePrice.text()
         try:
             int(ruleprice)
         except ValueError:
-            QMessageBox.warning(self, 'Error','Input price can only be a int, but not => "%s"'%ruleprice)
+            QMessageBox.warning(self, 'Error', 'Input price can only be a int, but not => "%s"' % ruleprice)
             return None
         price = xml.etree.ElementTree.SubElement(root, "Price")
         price.text = ruleprice
@@ -590,28 +578,26 @@ def usage(argsval):
 
 def main(argsval):
     '''main() - main loop timerulex'''
-    
+
     pathToDir = None
     pathToXML = None
     confPath = None
-    #print (argsval)
     if len(argsval) < 2:
         pathToDir = None
-    elif argsval[1]=='-h':
+    elif argsval[1] == '-h':
         usage(argsval)
         sys.exit()
-    elif argsval[1]=='-p':
+    elif argsval[1] == '-p':
         pathToDir = argsval[2]
-    elif argsval[1]=='-x':
+    elif argsval[1] == '-x':
         pathToXML = argsval[2]
-    elif argsval[1]=='-c':
+    elif argsval[1] == '-c':
         confPath = argsval[2]
-    elif argsval[1]=='-v':
+    elif argsval[1] == '-v':
         print (VERSION_INFO % __version__)
         sys.exit()
     elif os.path.isfile(argsval[1]):
         pathToXML = argsval[1]
-        
 
     app = QApplication(argsval)
     w = TimeX(confPath, pathToDir, pathToXML)
@@ -621,5 +607,3 @@ def main(argsval):
 if __name__ == "__main__":
     main(sys.argv)
     sys.exit()
-
-
