@@ -21,7 +21,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.5.9'''
+__version__ = '''0.5.10'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -218,15 +218,23 @@ class TimeX(QMainWindow):
         #self.commonLayout.removeAt(self.ruleScroll)
         del self.ruleScroll
 
+    def swichRules(self, rrr1, rrr2):
+        '''swichRules(self, rrr1, rrr2) - swich rules id rrr1 and rrr2'''
+        print ('rrr1, rrr2-----'+str((rrr1, rrr2)))
+
+    def removeRules(self, rrr):
+        '''removeRules(self, rrr) - remove id rrr'''
+        print ('rrr-----'+str((rrr)))
+
     def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
-        newrule = RuleString(len(self.ruleList), ruleElement)
+        newrule = RuleString(self, len(self.ruleList), ruleElement)
         self.ruleList.append(newrule)
         
-        #self.ruleList.insert(len(self.ruleList), RuleString(len(self.ruleList)))
+        #self.ruleList.insert(self, len(self.ruleList), RuleString(len(self.ruleList)))
         self.ruleLayot.insertWidget(len(self.ruleList), self.ruleList[rulePos])
         self.ruleScroll.update()
-        #RuleString(len(self.ruleList)).show()
+        #RuleString(self, len(self.ruleList).show()
 
     def selectFileRule(self):
         '''selectFileRule(self) - select path to rule'''
@@ -323,8 +331,9 @@ class TimeX(QMainWindow):
 
 class RuleString(QWidget):
     '''RuleString(QHBoxLayout) - rule string class'''
-    def __init__(self, ruleOrder, ruleElement = None):
+    def __init__(self, ruleParent, ruleOrder, ruleElement = None):
         super(RuleString, self).__init__()
+        self.ruleParent = ruleParent
         self.ruleOrder = ruleOrder
         
         self.ruleLayout = QHBoxLayout()
@@ -478,15 +487,20 @@ class RuleString(QWidget):
 
     def upRule(self):
         '''upRule(self) - move rule up'''
-        print ('upRule')
+        if self.ruleOrder<len(self.ruleParent.ruleList)-1:
+            self.ruleParent.swichRules(self.ruleOrder, self.ruleOrder+1)
+            print ('upRule')
 
     def removeRule(self):
         '''removeRule(self) - remove rule from rule list'''
-        print ('removeRule')
+        self.ruleParent.removeRules(self.ruleOrder)
+        print ('removeRules')
 
     def downRule(self):
         '''downRule(self) - move rule down'''
-        print ('downRule')
+        if self.ruleOrder>0:
+            self.ruleParent.swichRules(self.ruleOrder, self.ruleOrder-1)
+            print ('downRule')
 
     def PrintRule(self, RulesList):
         '''PrintRule(self) - Print Rule'''
