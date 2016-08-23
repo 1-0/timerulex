@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.12'''
+__version__ = '''0.6.14'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -105,7 +105,9 @@ class TimeX(QMainWindow):
         self.buttonPath = QPushButton(getIcon('system-lock-screen'), "Select Rule")
         self.buttonPath.setToolTip('Select rule file')
         self.buttonPath.clicked.connect(self.selectFileRule)
-        self.butAddRule = QPushButton(getIcon('folder-remote'), "Add Rule")
+        self.butAddRule = QPushButton("+")
+        self.butAddRule.setStyleSheet("QPushButton {font-size : 25px;}") 
+        #self.butAddRule = QPushButton(getIcon('folder-remote'), "Add Rule")
         self.butAddRule.setToolTip('Add rule')
         self.butAddRule.clicked.connect(self.addRule)
         self.pathLayout.addWidget(self.pathLabel)
@@ -471,18 +473,24 @@ class RuleString(QWidget):
         self.priceEnd = QLabel('End: ')
         self.priceLabel = QLabel('Price: ')
 
-        self.buttonUp = QPushButton('V')
+        self.buttonUp = QPushButton(u'↓')
         self.buttonUp.setToolTip('Up Rule')
         self.buttonUp.clicked.connect(self.upRule)
-        self.buttonRemove = QPushButton('-')
+        self.buttonRemove = QPushButton('X')
         self.buttonRemove.setToolTip('Remove Rule')
         self.buttonRemove.clicked.connect(self.removeRule)
-        self.buttonDown = QPushButton('^')
+        self.buttonDown = QPushButton(u'↑')
         self.buttonDown.setToolTip('Down Rule')
         self.buttonDown.clicked.connect(self.downRule)
         self.moveRule.addWidget(self.buttonDown)
         self.moveRule.addWidget(self.buttonRemove)
         self.moveRule.addWidget(self.buttonUp)
+        
+        self.buttonUp.setStyleSheet("QPushButton {font-size : 16px;}") 
+        self.buttonRemove.setStyleSheet("QPushButton {font-size : 16px;}") 
+        self.buttonDown.setStyleSheet("QPushButton {font-size : 16px;}") 
+        
+        
 
         self.ruleLayout.addWidget(self.orderRule)
 
