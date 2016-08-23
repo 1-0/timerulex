@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.11'''
+__version__ = '''0.6.12'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -145,6 +145,7 @@ class TimeX(QMainWindow):
         
         
         self.setCentralWidget(window)
+        #self.showMaximized()
         self.show()
 
         self.statusBar().showMessage('timerulex ver. ' + __version__)
@@ -153,7 +154,6 @@ class TimeX(QMainWindow):
     def initRules(self, treeXml = None):
         '''initRules(self) - init rules'''
         self.ruleScroll = QScrollArea()
-        self.ruleScroll.setMinimumHeight(1400)
         self.rulesW = QWidget()
         self.ruleLayot = QVBoxLayout()
 
@@ -176,12 +176,10 @@ class TimeX(QMainWindow):
         self.ruleScroll.setWidget(self.rulesW)
         self.ruleScroll.setWidgetResizable(True)
 
-        self.ruleScroll.setFixedHeight(400)
         self.ruleScroll.setFrameStyle(QFrame.NoFrame)
         self.ruleScroll.setFrameShadow(QFrame.Plain)
 
         self.commonLayout.addWidget(self.ruleScroll, 0, 0, 8, 8)
-        #print('self.ruleScroll.alignment()----'+str(self.ruleScroll.alignment()))
 
     def addOrderedRules(self):
         '''addOrderedRules(self) - add ordered rules'''
