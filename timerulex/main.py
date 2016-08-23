@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.10'''
+__version__ = '''0.6.11'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -96,7 +96,6 @@ class TimeX(QMainWindow):
         self.setWindowTitle(u'timeruleX')
 
         window = QWidget()
-        #self.commonLayout = QVBoxLayout()
         self.commonLayout = QGridLayout()
 
         self.pathLayout = QHBoxLayout()
@@ -129,111 +128,27 @@ class TimeX(QMainWindow):
         self.buttonExit.clicked.connect(self.exitClicked)
 
         window.setLayout(self.commonLayout)
-        #self.graphicsScene = QTextEdit()
-        #self.commonLayout.addWidget(self.graphicsScene)
-        
+
 # +++ add rules strings
-        self.layoutForRules =  QVBoxLayout()
         self.initRules()
 # --- add rules strings
-        self.commonLayout.addLayout(self.layoutForRules, 0, 0, 8, 8)
-        
+
         self.actLayout.addWidget(self.buttonPrint)
         self.actLayout.addWidget(self.buttonSave)
         self.actLayout.addWidget(self.buttonOpen)
         self.actLayout.addWidget(self.buttonExit)
+        self.commonLayout.addLayout(self.pathLayout, 8, 0, 1, 8)
+        self.commonLayout.addLayout(self.actLayout, 9, 0, 1, 8)
         
-        #self.commonLayout.insertSpacing (1, 100)
-        
-        self.commonLayout.addLayout(self.pathLayout, 9, 0, 8, 1)
-        self.commonLayout.addLayout(self.actLayout, 10, 0, 8, 1)
-        
+        self.commonLayout.setRowMinimumHeight(8, 60)
         self.commonLayout.setRowMinimumHeight(9, 60)
-        self.commonLayout.setRowMinimumHeight(10, 60)
         
-        #self.commonLayout.setSpacing(3)
-        #self.commonLayout.setDirection(QBoxLayout.TopToBottom)
-        
-        #self.pathLayout.addStretch(1)
-        #self.actLayout.addStretch(1)
-        #self.commonLayout.addStretch(1)
-        #window.setGeometry(300, 300, 300, 150)
         
         self.setCentralWidget(window)
         self.show()
 
         self.statusBar().showMessage('timerulex ver. ' + __version__)
 
-    #~ def initUI(self):
-        #~ '''initUI(self) - init Ui timerulex'''
-        #~ self.statusBar()
-        #~ self.setWindowIcon(getIcon('document-save'))
-        #~ self.setMinimumSize(740, 480)
-        #~ self.setWindowTitle(u'timeruleX')
-#~ 
-        #~ window = QWidget()
-        #~ self.commonLayout = QVBoxLayout()
-#~ 
-        #~ self.pathLayout = QHBoxLayout()
-        #~ self.pathLabel = QLabel("Path Rule: ")
-        #~ self.pathInput = QLineEdit(self.pathToXML)
-        #~ self.pathInput.setReadOnly(True)
-        #~ self.buttonPath = QPushButton(getIcon('system-lock-screen'), "Select Rule")
-        #~ self.buttonPath.setToolTip('Select rule file')
-        #~ self.buttonPath.clicked.connect(self.selectFileRule)
-        #~ self.butAddRule = QPushButton(getIcon('folder-remote'), "Add Rule")
-        #~ self.butAddRule.setToolTip('Add rule')
-        #~ self.butAddRule.clicked.connect(self.addRule)
-        #~ self.pathLayout.addWidget(self.pathLabel)
-        #~ self.pathLayout.addWidget(self.pathInput)
-        #~ self.pathLayout.addWidget(self.buttonPath)
-        #~ self.pathLayout.addWidget(self.butAddRule)
-#~ 
-        #~ self.actLayout = QHBoxLayout()
-        #~ self.buttonPrint = QPushButton(getIcon('network-workgroup'), "Print")
-        #~ self.buttonPrint.setToolTip('Print all')
-        #~ self.buttonPrint.clicked.connect(self.printRules)
-        #~ self.buttonSave = QPushButton(getIcon('document-save'), "Save")
-        #~ self.buttonSave.setToolTip('Save all')
-        #~ self.buttonSave.clicked.connect(self.saveRules)
-        #~ self.buttonOpen = QPushButton(getIcon('document-open'), "Open")
-        #~ self.buttonOpen.setToolTip('Open xml')
-        #~ self.buttonOpen.clicked.connect(self.openXML)
-        #~ self.buttonExit = QPushButton(getIcon('system-log-out'), "Exit")
-        #~ self.buttonExit.setToolTip('Exit timerulex')
-        #~ self.buttonExit.clicked.connect(self.exitClicked)
-#~ 
-        #~ window.setLayout(self.commonLayout)
-        #~ #self.graphicsScene = QTextEdit()
-        #~ #self.commonLayout.addWidget(self.graphicsScene)
-        #~ 
-#~ # +++ add rules strings
-        #~ self.layoutForRules =  QVBoxLayout()
-        #~ self.initRules()
-#~ # --- add rules strings
-        #~ self.commonLayout.addLayout(self.layoutForRules)
-        #~ 
-        #~ self.actLayout.addWidget(self.buttonPrint)
-        #~ self.actLayout.addWidget(self.buttonSave)
-        #~ self.actLayout.addWidget(self.buttonOpen)
-        #~ self.actLayout.addWidget(self.buttonExit)
-        #~ 
-        #~ #self.commonLayout.insertSpacing (1, 100)
-        #~ 
-        #~ self.commonLayout.addLayout(self.pathLayout)
-        #~ self.commonLayout.addLayout(self.actLayout)
-        #~ self.commonLayout.setSpacing(3)
-        #~ self.commonLayout.setDirection(QBoxLayout.TopToBottom)
-        #~ 
-        #~ #self.pathLayout.addStretch(1)
-        #~ #self.actLayout.addStretch(1)
-        #~ #self.commonLayout.addStretch(1)
-        #~ #window.setGeometry(300, 300, 300, 150)
-        #~ 
-        #~ self.setCentralWidget(window)
-        #~ self.show()
-#~ 
-        #~ self.statusBar().showMessage('timerulex ver. ' + __version__)
 
     def initRules(self, treeXml = None):
         '''initRules(self) - init rules'''
@@ -241,16 +156,7 @@ class TimeX(QMainWindow):
         self.ruleScroll.setMinimumHeight(1400)
         self.rulesW = QWidget()
         self.ruleLayot = QVBoxLayout()
-        #~ if treeXml ==None:
-            #~ self.treeXml = None
-            #~ try:
-                #~ self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
-            #~ except:
-                #~ print ('can not open - ' + self.pathToXML)
-                #~ self.addRule()
-        #~ else:
-            #~ self.treeXml = treeXml
-            
+
         if treeXml is None:
             self.treeXml = xml.etree.ElementTree.parse(self.pathToXML)
             self.rootXml = self.treeXml.getroot()
@@ -265,37 +171,17 @@ class TimeX(QMainWindow):
                     print('Can not parse - ' + str(self.rootXml))
                     QMessageBox.warning(self, 'Error parse XML file','Can not parse "%s"'%ruleprice)
                     self.addRule()
-            
 
         self.rulesW.setLayout(self.ruleLayot)
         self.ruleScroll.setWidget(self.rulesW)
         self.ruleScroll.setWidgetResizable(True)
-        
+
         self.ruleScroll.setFixedHeight(400)
         self.ruleScroll.setFrameStyle(QFrame.NoFrame)
         self.ruleScroll.setFrameShadow(QFrame.Plain)
-        
-        self.layoutForRules.addWidget(self.ruleScroll)
-        #self.actLayout.addWidget(self.ruleScroll)
 
-
-
-    #~ def paintEvent(self, e):
-#~ 
-        #~ qp = QPainter()
-        #~ qp.begin(self)
-        #~ self.drawPoints(qp)
-        #~ qp.end()
-        #~ 
-    #~ def drawPoints(self, qp):
-      #~ 
-        #~ qp.setPen(QtCore.Qt.red)
-        #~ size = self.size()
-        #~ 
-        #~ for i in range(1000):
-            #~ x = random.randint(1, size.width()-1)
-            #~ y = random.randint(1, size.height()-1)
-            #~ qp.drawPoint(x, y)    
+        self.commonLayout.addWidget(self.ruleScroll, 0, 0, 8, 8)
+        #print('self.ruleScroll.alignment()----'+str(self.ruleScroll.alignment()))
 
     def addOrderedRules(self):
         '''addOrderedRules(self) - add ordered rules'''
@@ -322,7 +208,6 @@ class TimeX(QMainWindow):
         '''removeAllRules(self) - remove all rules'''
         self.ruleList = []
         self.ruleScroll.setParent(None)
-        #self.commonLayout.removeAt(self.ruleScroll)
         del self.ruleScroll
 
     def remasterXml(self):
