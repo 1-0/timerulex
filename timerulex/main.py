@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.14'''
+__version__ = '''0.6.16'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -171,7 +171,7 @@ class TimeX(QMainWindow):
                     self.addOrderedRules()
                 except:
                     print('Can not parse - ' + str(self.rootXml))
-                    QMessageBox.warning(self, 'Error parse XML file','Can not parse "%s"'%ruleprice)
+                    QMessageBox.warning(self, 'Error parse XML file', 'Can not parse "%s"'%ruleprice)
                     self.addRule()
 
         self.rulesW.setLayout(self.ruleLayot)
@@ -233,6 +233,12 @@ class TimeX(QMainWindow):
         r1.find('OrderId').text = rrr2
         r2.find('OrderId').text = rrr1
         self.initRules(treeXml = self.treeXml)
+        #~ try:
+            #~ self.ruleList[min(rrr1, rrr2)].rulePrice.setFocus()
+            #~ self.ruleScroll.ensureWidgetVisible(self.ruleList[min(rrr1, rrr2)].rulePrice.setFocus())
+            #~ print('min(rrr1, rrr2)-------'+str(min(rrr1, rrr2)))
+        #~ except:
+            #~ return
 
     def removeOneRule(self, rrr):
         '''removeOneRule(self, rrr) - remove rule by id rrr'''
@@ -248,6 +254,12 @@ class TimeX(QMainWindow):
             self.getRuleByOrderId(iii).find('OrderId').text = str(iii - 1)
         
         self.initRules(treeXml = self.treeXml)
+        #~ try:
+            #~ self.ruleList[rrr-1].rulePrice.setFocus()
+            #~ self.ruleScroll.ensureWidgetVisible(self.ruleList[rrr-1].rulePrice.setFocus())
+            #~ print('rrr-1-------'+str(rrr-1))
+        #~ except:
+            #~ return
 
     def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
@@ -283,13 +295,13 @@ class TimeX(QMainWindow):
 
     def exitClicked(self):
         '''exitClicked(self) - exit clicked'''
-        exitcheck = QMessageBox.warning(self, 'Confirm exit','Confirm exit timerulex', QMessageBox.Yes | QMessageBox.No)
+        exitcheck = QMessageBox.warning(self, 'Confirm exit', 'Confirm exit timerulex', QMessageBox.Yes | QMessageBox.No)
         if exitcheck==QMessageBox.Yes:
             sys.exit()
 
     def closeEvent(self, event):
         '''closeEvent(self) - close button clicked'''
-        exitcheck = QMessageBox.warning(self, 'Confirm exit','Confirm exit timerulex', QMessageBox.Yes | QMessageBox.No)
+        exitcheck = QMessageBox.warning(self, 'Confirm exit', 'Confirm exit timerulex', QMessageBox.Yes | QMessageBox.No)
         if exitcheck==QMessageBox.Yes:
             event.accept()
             sys.exit()
@@ -329,7 +341,7 @@ class TimeX(QMainWindow):
                 default_namespace=None, method="xml")
         except IOError:
             print ("""Can't open(self.pathInput.text(), 'w') - """+self.pathInput.text())
-            QMessageBox.warning(self, 'Error open file','Can not open "%s"'%self.pathInput.text())
+            QMessageBox.warning(self, 'Error save file', 'Can not save "%s"'%self.pathInput.text())
                     #os.makedirs(self.homePath+os.sep+'.config')
             #self.conf = open(self.confPath, 'w+')
 #        finally:
@@ -337,7 +349,7 @@ class TimeX(QMainWindow):
 
     def openXML(self):
         '''openXML(self) - parse file from self.pathInput.text()'''
-        opencheck = QMessageBox.warning(self, 'Confirm open xml file','Confirm open xml file "%s" and lost unsaved rules'%self.pathInput.text(), QMessageBox.Yes | QMessageBox.No)
+        opencheck = QMessageBox.warning(self, 'Confirm open xml file', 'Confirm open xml file "%s" and lost unsaved rules'%self.pathInput.text(), QMessageBox.Yes | QMessageBox.No)
         if opencheck==QMessageBox.Yes:
             try:
                 self.conf = open(self.pathInput.text(), 'r')
@@ -345,7 +357,7 @@ class TimeX(QMainWindow):
                 self.conf.close()
             except IOError:
                 print ("""open(self.pathInput.text(), 'r') - """+self.pathInput.text())
-                QMessageBox.warning(self, 'Error open xml','Can not open xml "%s"'%self.pathInput.text())
+                QMessageBox.warning(self, 'Error open xml', 'Can not open xml "%s"'%self.pathInput.text())
                 return
 
             tree = xml.etree.ElementTree.fromstring(xmltext)
@@ -355,9 +367,6 @@ class TimeX(QMainWindow):
             self.pathToXML = self.pathInput.text()
             self.removeAllRules()
             self.initRules()
-            
-            #print (xml.etree.ElementTree.tostring(tree)) # removed argument: prettyprint
-
 
 class RuleString(QWidget):
     '''RuleString(QHBoxLayout) - rule string class'''
@@ -485,12 +494,10 @@ class RuleString(QWidget):
         self.moveRule.addWidget(self.buttonDown)
         self.moveRule.addWidget(self.buttonRemove)
         self.moveRule.addWidget(self.buttonUp)
-        
-        self.buttonUp.setStyleSheet("QPushButton {font-size : 16px;}") 
-        self.buttonRemove.setStyleSheet("QPushButton {font-size : 16px;}") 
-        self.buttonDown.setStyleSheet("QPushButton {font-size : 16px;}") 
-        
-        
+
+        self.buttonUp.setStyleSheet("QPushButton {font-size : 16px;}")
+        self.buttonRemove.setStyleSheet("QPushButton {font-size : 16px;}")
+        self.buttonDown.setStyleSheet("QPushButton {font-size : 16px;}")
 
         self.ruleLayout.addWidget(self.orderRule)
 
