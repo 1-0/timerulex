@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.7.1'''
+__version__ = '''0.7.2'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -150,6 +150,7 @@ class TimeX(QMainWindow):
         self.setCentralWidget(window)
         #self.showMaximized()
         self.show()
+        #self.setStyleSheet("QStatusBar {border: 3px solid green;}")
 
         self.statusBar().showMessage('timerulex ver. ' + __version__)
 
@@ -175,6 +176,7 @@ class TimeX(QMainWindow):
                     QMessageBox.warning(self, 'Error parse XML file', 'Can not parse "%s"'%ruleprice)
                     self.addRule()
 
+        self.setStyleSheet("QScrollArea QWidget {border: 1px solid green;}")
         self.rulesW.setLayout(self.ruleLayot)
         self.ruleScroll.setWidget(self.rulesW)
         self.ruleScroll.setWidgetResizable(True)
@@ -370,7 +372,7 @@ class TimeX(QMainWindow):
             self.initRules()
 
 class RuleString(QWidget):
-    '''RuleString(QHBoxLayout) - rule string class'''
+    '''RuleString(QWidget) - rule string class'''
     def __init__(self, ruleParent, ruleOrder, ruleElement=None):
         super(RuleString, self).__init__(ruleParent.ruleScroll)
         self.ruleParent = ruleParent
@@ -522,6 +524,7 @@ class RuleString(QWidget):
 
         self.setLayout(self.ruleLayout)
         self.setStyleSheet("QWidget {background-color: %s;}" % (COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]))
+        
 
     def upRule(self):
         '''upRule(self) - move rule up'''
