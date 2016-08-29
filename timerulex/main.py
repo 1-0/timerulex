@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.16'''
+__version__ = '''0.6.18'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -233,12 +233,12 @@ class TimeX(QMainWindow):
         r1.find('OrderId').text = rrr2
         r2.find('OrderId').text = rrr1
         self.initRules(treeXml = self.treeXml)
-        #~ try:
-            #~ self.ruleList[min(rrr1, rrr2)].rulePrice.setFocus()
-            #~ self.ruleScroll.ensureWidgetVisible(self.ruleList[min(rrr1, rrr2)].rulePrice.setFocus())
-            #~ print('min(rrr1, rrr2)-------'+str(min(rrr1, rrr2)))
-        #~ except:
-            #~ return
+        try:
+            self.ruleList[rrr2].rulePrice.setFocus()
+            self.ruleScroll.ensureWidgetVisible(self.ruleList[rrr2].buttonDown)
+            #print('min(rrr1, rrr2)-------'+str(min(rrr1, rrr2)))
+        except:
+            return
 
     def removeOneRule(self, rrr):
         '''removeOneRule(self, rrr) - remove rule by id rrr'''
@@ -254,12 +254,12 @@ class TimeX(QMainWindow):
             self.getRuleByOrderId(iii).find('OrderId').text = str(iii - 1)
         
         self.initRules(treeXml = self.treeXml)
-        #~ try:
-            #~ self.ruleList[rrr-1].rulePrice.setFocus()
-            #~ self.ruleScroll.ensureWidgetVisible(self.ruleList[rrr-1].rulePrice.setFocus())
-            #~ print('rrr-1-------'+str(rrr-1))
-        #~ except:
-            #~ return
+        try:
+            self.ruleList[rrr-1].rulePrice.setFocus()
+            self.ruleScroll.ensureWidgetVisible(self.ruleList[rrr-1].rulePrice)
+            #print('rrr-1-------'+str(rrr-1))
+        except:
+            return
 
     def addRule(self, rulePos=-1, ruleElement=None):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
@@ -371,7 +371,7 @@ class TimeX(QMainWindow):
 class RuleString(QWidget):
     '''RuleString(QHBoxLayout) - rule string class'''
     def __init__(self, ruleParent, ruleOrder, ruleElement=None):
-        super(RuleString, self).__init__()
+        super(RuleString, self).__init__(ruleParent.ruleScroll)
         self.ruleParent = ruleParent
         self.ruleOrder = ruleOrder
 
@@ -455,7 +455,7 @@ class RuleString(QWidget):
 
         pricetext = self.ruleElement.find('Price').text
 
-        self.rulePrice = QLineEdit(pricetext)
+        self.rulePrice = QLineEdit(pricetext, self.ruleParent.ruleScroll)
         self.rulePrice.setToolTip('rulePrice')
 
         self.endInit()
@@ -495,9 +495,10 @@ class RuleString(QWidget):
         self.moveRule.addWidget(self.buttonRemove)
         self.moveRule.addWidget(self.buttonUp)
 
-        self.buttonUp.setStyleSheet("QPushButton {font-size : 16px;}")
-        self.buttonRemove.setStyleSheet("QPushButton {font-size : 16px;}")
-        self.buttonDown.setStyleSheet("QPushButton {font-size : 16px;}")
+        movebuttonsstyle = "QPushButton {font-size : 16px;}"
+        self.buttonUp.setStyleSheet(movebuttonsstyle)
+        self.buttonRemove.setStyleSheet(movebuttonsstyle)
+        self.buttonDown.setStyleSheet(movebuttonsstyle)
 
         self.ruleLayout.addWidget(self.orderRule)
 
