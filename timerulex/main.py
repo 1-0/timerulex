@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.19'''
+__version__ = '''0.7.1'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -521,6 +521,7 @@ class RuleString(QWidget):
         self.ruleLayout.addLayout(self.moveRule)
 
         self.setLayout(self.ruleLayout)
+        self.setStyleSheet("QWidget {background-color: %s;}" % (COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]))
 
     def upRule(self):
         '''upRule(self) - move rule up'''
