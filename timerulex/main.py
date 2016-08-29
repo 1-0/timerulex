@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.6.18'''
+__version__ = '''0.6.19'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -54,7 +54,7 @@ def getIcon(iconname):
     """getIcon(iconname) - get icon data by icon name"""
     newPixmap = QPixmap()
     newPixmap.loadFromData(TANGO_ICONS[iconname])
-    return QIcon(newPixmap)
+    return QIcon.fromTheme(iconname, QIcon(newPixmap))
 
 
 def getFileName(pathName, separatorSymbol=None):
@@ -91,6 +91,7 @@ class TimeX(QMainWindow):
     def initUI(self):
         '''initUI(self) - init Ui timerulex'''
         self.statusBar()
+        
         self.setWindowIcon(getIcon('document-save'))
         self.setMinimumSize(740, 480)
         self.setWindowTitle(u'timeruleX')
@@ -142,8 +143,8 @@ class TimeX(QMainWindow):
         self.commonLayout.addLayout(self.pathLayout, 8, 0, 1, 8)
         self.commonLayout.addLayout(self.actLayout, 9, 0, 1, 8)
         
-        self.commonLayout.setRowMinimumHeight(8, 60)
-        self.commonLayout.setRowMinimumHeight(9, 60)
+        #self.commonLayout.setRowMinimumHeight(8, 60)
+        #self.commonLayout.setRowMinimumHeight(9, 60)
         
         
         self.setCentralWidget(window)
@@ -391,7 +392,7 @@ class RuleString(QWidget):
             self.initRule()
 
     def initRule(self):
-        '''initRule(self) - init rule ui'''
+        '''initRule(self) - init rule ui default'''
 
         nnn = QtCore.QDateTime()
 
@@ -414,7 +415,7 @@ class RuleString(QWidget):
         self.endInit()
 
     def initRuleXml(self):
-        '''initRule(self) - init rule ui'''
+        '''initRule(self) - init rule ui from xml'''
 
         stimetext = self.ruleElement.find('StartTime').text
         stime = QtCore.QTime(int(stimetext[:2]), int(stimetext[3:5]))
