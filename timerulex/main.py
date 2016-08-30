@@ -22,7 +22,7 @@ from PySide.QtGui import *
 def _(strin):
     return strin
 
-__version__ = '''0.7.2'''
+__version__ = '''0.7.3'''
 VERSION_INFO = _(u"timerulex. Time rules config licensed by GPL3. Ver. %s")
 CONSOLE_USAGE = _(u'''
 [KEY]...[FILE]
@@ -87,6 +87,14 @@ class TimeX(QMainWindow):
         self.startPath = self.baseDir
         self.ruleList = []
         self.initUI()
+        #~ self.setStyleSheet("""
+        #~ QWidget {
+            #~ border: 2px solid black;
+            #~ border-radius: 5px;
+            #~ background-color: rgb(255, 255, 255);
+            #~ }
+        #~ """)
+
 
     def initUI(self):
         '''initUI(self) - init Ui timerulex'''
@@ -158,6 +166,8 @@ class TimeX(QMainWindow):
     def initRules(self, treeXml = None):
         '''initRules(self) - init rules'''
         self.ruleScroll = QScrollArea()
+        self.ruleScroll.setStyleSheet("QPushButton {font-size : 16px;}")
+
         self.rulesW = QWidget()
         self.ruleLayot = QVBoxLayout()
 
@@ -175,8 +185,9 @@ class TimeX(QMainWindow):
                     print('Can not parse - ' + str(self.rootXml))
                     QMessageBox.warning(self, 'Error parse XML file', 'Can not parse "%s"'%ruleprice)
                     self.addRule()
+                    
 
-        self.setStyleSheet("QScrollArea QWidget {border: 1px solid green;}")
+        #self.setStyleSheet("QScrollArea QWidget {border: 1px solid green;}")
         self.rulesW.setLayout(self.ruleLayot)
         self.ruleScroll.setWidget(self.rulesW)
         self.ruleScroll.setWidgetResizable(True)
@@ -268,8 +279,15 @@ class TimeX(QMainWindow):
         '''addRule(self, rulePos=-1, ruleString='') - add rule to ruleList'''
         newrule = RuleString(self, len(self.ruleList), ruleElement)
         self.ruleList.append(newrule)
+        #~ print ('newrule.metaObject().className()='+str(newrule.metaObject().className()))
+        #~ newrule.setStyleSheet ("Shiboken { border: solid green; }")
+        #~ print(help(newrule))
+        #~ print(dir(newrule.style()))
+
+        #~ print(newrule.styleSheet())
+
         self.ruleLayot.insertWidget(len(self.ruleList), self.ruleList[rulePos])
-        self.ruleScroll.update()
+        #self.ruleScroll.update()
 
     def selectFileRule(self):
         '''selectFileRule(self) - select path to rule'''
@@ -371,6 +389,7 @@ class TimeX(QMainWindow):
             self.removeAllRules()
             self.initRules()
 
+
 class RuleString(QWidget):
     '''RuleString(QWidget) - rule string class'''
     def __init__(self, ruleParent, ruleOrder, ruleElement=None):
@@ -392,6 +411,11 @@ class RuleString(QWidget):
         else:
             self.ruleElement = None
             self.initRule()
+        #RuleString.setProperty(RuleString, 'READ')
+
+    #~ def cssClass(self):
+        #~ print ('css')
+        #~ return "RuleString"
 
     def initRule(self):
         '''initRule(self) - init rule ui default'''
@@ -498,11 +522,6 @@ class RuleString(QWidget):
         self.moveRule.addWidget(self.buttonRemove)
         self.moveRule.addWidget(self.buttonUp)
 
-        movebuttonsstyle = "QPushButton {font-size : 16px;}"
-        self.buttonUp.setStyleSheet(movebuttonsstyle)
-        self.buttonRemove.setStyleSheet(movebuttonsstyle)
-        self.buttonDown.setStyleSheet(movebuttonsstyle)
-
         self.ruleLayout.addWidget(self.orderRule)
 
         self.ruleTimesStart.addWidget(self.priceStart)
@@ -523,8 +542,7 @@ class RuleString(QWidget):
         self.ruleLayout.addLayout(self.moveRule)
 
         self.setLayout(self.ruleLayout)
-        self.setStyleSheet("QWidget {background-color: %s;}" % (COLORS_NAME[len(COLORS_NAME) - self.ruleOrder - 1]))
-        
+
 
     def upRule(self):
         '''upRule(self) - move rule up'''
@@ -533,7 +551,7 @@ class RuleString(QWidget):
 
     def removeRule(self):
         '''removeRule(self) - remove rule from rule list'''
-        removecheck = QMessageBox.warning(self, 'Confirm delete rule', 'Confirm delete rule "#%d"' % self.ruleOrder, QMessageBox.Yes | QMessageBox.No)
+        removecheck = QMessageBox.warning(self.ruleParent, 'Confirm delete rule', 'Confirm delete rule "#%d"' % self.ruleOrder, QMessageBox.Yes | QMessageBox.No)
         if removecheck == QMessageBox.Yes:
             self.ruleParent.removeOneRule(self.ruleOrder)
 
